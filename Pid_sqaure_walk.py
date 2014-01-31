@@ -14,12 +14,14 @@ BrickPi.MotorEnable[PORT_A] = 1     #Enable the Motor A
 BrickPi.MotorEnable[PORT_B] = 1     #Enable the Motor A
 ROTATIONS_PER_CM = 23.25
 ROTATIONS_PER_DEGREE = 10/9
-FORWARD_SPEED_A = 232
+FORWARD_SPEED_A = 200
 FORWARD_SPEED_B = 200
 TURN_SPEED = 150
 K_p = 1
 K_i = 1
 K_d = 1
+
+ERROR = 0
 
 BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
@@ -33,7 +35,7 @@ def forward(distance_cm):
 	rotations_B = BrickPi.Encoder[PORT_B] 
 	s_rotations_A = rotations_A
 	s_rotations_B = rotations_B
-	while (BrickPi.Encoder[PORT_A] - curr_degree < 980):
+	while (BrickPi.Encoder[PORT_A] - curr_degree < 980 * 10):
 		t_diff = time.time() - t
 		n_rotations_A = BrickPi.Encoder[PORT_A] 
 		n_rotations_B = BrickPi.Encoder[PORT_B] 
@@ -41,7 +43,8 @@ def forward(distance_cm):
 			speed_A = (n_rotations_A - rotations_A)/t_diff
 			speed_B = (n_rotations_B - rotations_B)/t_diff
 			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff)
-			BrickPi.MotorSpeed[PORT_B] += adjustment
+			print (int(adjustment))
+			BrickPi.MotorSpeed[PORT_B] += int(adjustment)
 			t = time.time()
 			rotations_A = n_rotations_A
 			rotations_B = n_rotations_B
@@ -65,18 +68,18 @@ def turn(degrees):
 def derivative(e1, e2):
 	return e1 - e2
 
-ERROR = 0
 
 def control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff):
+	global ERROR
 	error = speed_A - speed_B
-	derivative = (error - ERROR)/t_diff
-	integral = n_rotations_B - s_rotations_B - (n_rotations_A - s_rotations_A) 
+	derivative = 0.01 * (error - ERROR)/t_diff
+	integral = 0.1 * (n_rotations_A - s_rotations_A - (n_rotations_B - s_rotations_B)) 
 	out = K_p * error + K_i*integral + K_d * derivative
-	print("out: " + out + ", error: " + error + " ,integral: " + integral+ " , derivative:" + derivative)
+	print("out: " , out , ", error: " , error , " ,integral: " , integral, " , derivative:" , derivative)
 	ERROR = error
 	return out
 
-forward(60)
+forward(200)
 '''
 for i in range(0,4):
 	forward(40)
