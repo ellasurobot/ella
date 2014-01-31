@@ -16,12 +16,12 @@ BrickPi.MotorEnable[PORT_A] = 1     #Enable the Motor A
 BrickPi.MotorEnable[PORT_B] = 1     #Enable the Motor A
 ROTATIONS_PER_CM = 29.85
 ROTATIONS_PER_DEGREE = 10/9
-FORWARD_SPEED_A = 200
-FORWARD_SPEED_B = 200
-TURN_SPEED = 150
-K_p_f = 0.18
-K_i_f = 0.1
-K_d_f = 0.01
+FORWARD_SPEED_A = 100
+FORWARD_SPEED_B = 100
+TURN_SPEED = 100
+K_p_f = 0.01
+K_i_f = 0.05
+K_d_f = 0.0001
 
 K_p_t = 0.18
 K_i_t = 0.1
@@ -29,7 +29,7 @@ K_d_t = 0.01
 
 
 
-TIME_DIFF = 0.05
+TIME_DIFF = 0.001
 
 
 ERROR = 0
@@ -42,6 +42,7 @@ def forward(distance_cm):
 	BrickPi.MotorSpeed[PORT_A] = FORWARD_SPEED_A   
 	BrickPi.MotorSpeed[PORT_B] = FORWARD_SPEED_B    
 	t = time.time()
+	t_s = t
 	rotations_A = BrickPi.Encoder[PORT_A] 
 	rotations_B = BrickPi.Encoder[PORT_B] 
 	s_rotations_A = rotations_A
@@ -50,7 +51,7 @@ def forward(distance_cm):
 		t_diff = time.time() - t
 		n_rotations_A = BrickPi.Encoder[PORT_A] 
 		n_rotations_B = BrickPi.Encoder[PORT_B] 
-		if(t_diff > TIME_DIFF):
+		if((time.time() - t_s) > 0.1 and t_diff > TIME_DIFF):
 			speed_A = (n_rotations_A - rotations_A)/t_diff
 			speed_B = (n_rotations_B - rotations_B)/t_diff
 			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff, K_p_f, K_i_f, K_d_f)
@@ -74,7 +75,7 @@ def turn(degrees):
 	rotations_B = BrickPi.Encoder[PORT_B] 
 	s_rotations_A = rotations_A
 	s_rotations_B = rotations_B
-	while (BrickPi.Encoder[PORT_A] - curr_degree < 800):
+	while (BrickPi.Encoder[PORT_A] - curr_degree < 100):
 		t_diff = time.time() - t
 		n_rotations_A = BrickPi.Encoder[PORT_A] 
 		n_rotations_B = BrickPi.Encoder[PORT_B] 
@@ -83,7 +84,7 @@ def turn(degrees):
 			speed_B = math.fabs(n_rotations_B - rotations_B)/t_diff
 			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff, K_p_t, K_i_t, K_d_t)
 			print (int(adjustment))
-			BrickPi.MotorSpeed[PORT_B] -= int(adjustment)*0
+			BrickPi.MotorSpeed[PORT_B] -= int(adjustment)
 			t = time.time()
 			rotations_A = n_rotations_A
 			rotations_B = n_rotations_B
@@ -101,7 +102,8 @@ def control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rot
 	ERROR = error
 	return out
 
-forward(40)
+forward(80)
+#time.sleep(1.0)
 #turn(90)
 '''
 for i in range(0,4):
