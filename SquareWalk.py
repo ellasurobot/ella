@@ -7,7 +7,7 @@
 # This code is for testing the BrickPi with a Lego Motor 
 
 from BrickPi import *   #import BrickPi.py file to use BrickPi operations
-from Moves import *
+from Moves import forward, turn
 
 
 BrickPiSetup()  # setup the serial port for communication
@@ -17,6 +17,8 @@ BrickPi.MotorEnable[PORT_B] = 1     #Enable the Motor A
 
 BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
+
+
 SLEEP_TIME = 1.5	# sleep 1.5s between each move
 DISTANCE = 40		# move forward in cm
 DEGREES = 90	# turn to the right in degrees
@@ -24,5 +26,5 @@ DEGREES = 90	# turn to the right in degrees
 for i in range(0,4):
 	forward(DISTANCE)
 	time.sleep(SLEEP_TIME)
-	turn_right(DEGREES)
+	turn(DEGREES)
 	time.sleep(SLEEP_TIME)
