@@ -13,7 +13,7 @@ BrickPiSetup()  # setup the serial port for communication
 BrickPi.MotorEnable[PORT_A] = 1     #Enable the Motor A
 BrickPi.MotorEnable[PORT_B] = 1     #Enable the Motor A
 ROTATIONS_PER_CM = 23.25
-ROTATIONS_PER_DEGREE = 10/9
+ROTATIONS_PER_DEGREE = 13/9
 FORWARD_SPEED_A = 232
 FORWARD_SPEED_B = 200
 TURN_SPEED = 150
@@ -42,11 +42,8 @@ def turn(degrees):
 #		print BrickPi.Encoder[PORT_A] - curr_degree , degrees * ROTATIONS_PER_DEGREE
 		BrickPiUpdateValues() 
 
-forward(40)
-'''
 for i in range(0,4):
 	forward(40)
 	time.sleep(1.5)
 	turn(90)
 	time.sleep(1.5)
-'''
