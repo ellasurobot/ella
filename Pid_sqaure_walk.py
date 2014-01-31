@@ -8,18 +8,29 @@
 
 from BrickPi import *   #import BrickPi.py file to use BrickPi operations
 
+import math
+
 BrickPiSetup()  # setup the serial port for communication
 
 BrickPi.MotorEnable[PORT_A] = 1     #Enable the Motor A
 BrickPi.MotorEnable[PORT_B] = 1     #Enable the Motor A
-ROTATIONS_PER_CM = 23.25
+ROTATIONS_PER_CM = 29.85
 ROTATIONS_PER_DEGREE = 10/9
 FORWARD_SPEED_A = 200
 FORWARD_SPEED_B = 200
 TURN_SPEED = 150
-K_p = 1
-K_i = 1
-K_d = 1
+K_p_f = 0.18
+K_i_f = 0.1
+K_d_f = 0.01
+
+K_p_t = 0.18
+K_i_t = 0.1
+K_d_t = 0.01
+
+
+
+TIME_DIFF = 0.05
+
 
 ERROR = 0
 
@@ -35,14 +46,14 @@ def forward(distance_cm):
 	rotations_B = BrickPi.Encoder[PORT_B] 
 	s_rotations_A = rotations_A
 	s_rotations_B = rotations_B
-	while (BrickPi.Encoder[PORT_A] - curr_degree < 980 * 10):
+	while (BrickPi.Encoder[PORT_A] - curr_degree < ROTATIONS_PER_CM * distance_cm):
 		t_diff = time.time() - t
 		n_rotations_A = BrickPi.Encoder[PORT_A] 
 		n_rotations_B = BrickPi.Encoder[PORT_B] 
-		if(t_diff > 0.1):
+		if(t_diff > TIME_DIFF):
 			speed_A = (n_rotations_A - rotations_A)/t_diff
 			speed_B = (n_rotations_B - rotations_B)/t_diff
-			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff)
+			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff, K_p_f, K_i_f, K_d_f)
 			print (int(adjustment))
 			BrickPi.MotorSpeed[PORT_B] += int(adjustment)
 			t = time.time()
@@ -58,28 +69,40 @@ def turn(degrees):
 		BrickPi.MotorSpeed[PORT_A] = -1*TURN_SPEED   
 		BrickPi.MotorSpeed[PORT_B] = TURN_SPEED    
 	curr_degree = BrickPi.Encoder[PORT_A]
-	
-	while (BrickPi.Encoder[PORT_A] - curr_degree < 113):
-		BrickPiUpdateValues() 
+	t = time.time()
+	rotations_A = BrickPi.Encoder[PORT_A] 
+	rotations_B = BrickPi.Encoder[PORT_B] 
+	s_rotations_A = rotations_A
+	s_rotations_B = rotations_B
+	while (BrickPi.Encoder[PORT_A] - curr_degree < 800):
+		t_diff = time.time() - t
+		n_rotations_A = BrickPi.Encoder[PORT_A] 
+		n_rotations_B = BrickPi.Encoder[PORT_B] 
+		if(t_diff > TIME_DIFF):
+			speed_A = math.fabs(n_rotations_A - rotations_A)/t_diff
+			speed_B = math.fabs(n_rotations_B - rotations_B)/t_diff
+			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff, K_p_t, K_i_t, K_d_t)
+			print (int(adjustment))
+			BrickPi.MotorSpeed[PORT_B] -= int(adjustment)*0
+			t = time.time()
+			rotations_A = n_rotations_A
+			rotations_B = n_rotations_B
+			BrickPiUpdateValues() 
 
 
 
-#proportional
-def derivative(e1, e2):
-	return e1 - e2
-
-
-def control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff):
+def control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff, K_p, K_i, K_d):
 	global ERROR
 	error = speed_A - speed_B
-	derivative = 0.01 * (error - ERROR)/t_diff
-	integral = 0.1 * (n_rotations_A - s_rotations_A - (n_rotations_B - s_rotations_B)) 
+	derivative = (error - ERROR)/t_diff
+	integral = math.fabs(n_rotations_A - s_rotations_A) - math.fabs(n_rotations_B - s_rotations_B) 
 	out = K_p * error + K_i*integral + K_d * derivative
 	print("out: " , out , ", error: " , error , " ,integral: " , integral, " , derivative:" , derivative)
 	ERROR = error
 	return out
 
-forward(200)
+forward(40)
+#turn(90)
 '''
 for i in range(0,4):
 	forward(40)
