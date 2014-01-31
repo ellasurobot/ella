@@ -32,7 +32,7 @@ def forward(distance_cm):
     		BrickPiUpdateValues() 
 
 def turn(degrees):
-    	BrickPiUpdateValues() 
+	BrickPiUpdateValues() 
 	BrickPi.MotorSpeed[PORT_A] = TURN_SPEED   
 	BrickPi.MotorSpeed[PORT_B] = -1*TURN_SPEED    
 	if(degrees < 0):
@@ -48,33 +48,31 @@ def error():
 	desired = BrickPi.Encoder[PORT_A]	
 	expected = BrickPi.Encoder[PORT_B]
 	e = desired - expected
-  return e
-	ERROR = e
-	TOTAL_ERROR += e
+	return e
 
 TOTAL_ERROR = 0
 ERROR = 0
 
 #proportional
 def derivative(e1, e2):
-  return e1 - e2
+	return e1 - e2
 
 #proportional
-def integral()
+def integral():
   return TOTAL_ERROR
 
 def control():
 	e = error()
-  deriv = derivative(e, ERROR)
-  TOTAL_ERROR += e
-  integr = integral()
+	deriv = derivative(e, ERROR)
+	TOTAL_ERROR += e
+	integr = integral()
 	out = K_p * error + K_i*integral + K_d * derivative
 
 ot = time.time()
 COUNTER = 0
 while(time.time() - ot < 1):
-  COUNTER++
-print COUNTER
+	COUNTER = COUNTER + 1
+#print COUNTER
 
 '''
 for i in range(0,4):
