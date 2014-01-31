@@ -17,9 +17,9 @@ ROTATIONS_PER_DEGREE = 10/9
 FORWARD_SPEED_A = 232
 FORWARD_SPEED_B = 200
 TURN_SPEED = 150
-K_p = 0
-K_i = 0
-K_d = 0
+K_p = 1
+K_i = 1
+K_d = 1
 
 BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
@@ -28,8 +28,24 @@ def forward(distance_cm):
 	curr_degree = BrickPi.Encoder[PORT_A]
 	BrickPi.MotorSpeed[PORT_A] = FORWARD_SPEED_A   
 	BrickPi.MotorSpeed[PORT_B] = FORWARD_SPEED_B    
+	t = time.time()
+	rotations_A = BrickPi.Encoder[PORT_A] 
+	rotations_B = BrickPi.Encoder[PORT_B] 
+	s_rotations_A = rotations_A
+	s_rotations_B = rotations_B
 	while (BrickPi.Encoder[PORT_A] - curr_degree < 980):
-    		BrickPiUpdateValues() 
+		t_diff = time.time() - t
+		n_rotations_A = BrickPi.Encoder[PORT_A] 
+		n_rotations_B = BrickPi.Encoder[PORT_B] 
+		if(t_diff > 0.1):
+			speed_A = (n_rotations_A - rotations_A)/t_diff
+			speed_B = (n_rotations_B - rotations_B)/t_diff
+			adjustment = control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff)
+			BrickPi.MotorSpeed[PORT_B] += adjustment
+			t = time.time()
+			rotations_A = n_rotations_A
+			rotations_B = n_rotations_B
+			BrickPiUpdateValues() 
 
 def turn(degrees):
 	BrickPiUpdateValues() 
@@ -41,39 +57,26 @@ def turn(degrees):
 	curr_degree = BrickPi.Encoder[PORT_A]
 	
 	while (BrickPi.Encoder[PORT_A] - curr_degree < 113):
-#		print BrickPi.Encoder[PORT_A] - curr_degree , degrees * ROTATIONS_PER_DEGREE
 		BrickPiUpdateValues() 
 
-def error():
-	desired = BrickPi.Encoder[PORT_A]	
-	expected = BrickPi.Encoder[PORT_B]
-	e = desired - expected
-	return e
 
-TOTAL_ERROR = 0
-ERROR = 0
 
 #proportional
 def derivative(e1, e2):
 	return e1 - e2
 
-#proportional
-def integral():
-  return TOTAL_ERROR
+ERROR = 0
 
-def control():
-	e = error()
-	deriv = derivative(e, ERROR)
-	TOTAL_ERROR += e
-	integr = integral()
+def control(speed_A, speed_B, s_rotations_A, s_rotations_B, n_rotations_A, n_rotations_B, t_diff):
+	error = speed_A - speed_B
+	derivative = (error - ERROR)/t_diff
+	integral = n_rotations_B - s_rotations_B - (n_rotations_A - s_rotations_A) 
 	out = K_p * error + K_i*integral + K_d * derivative
+	print("out: " + out + ", error: " + error + " ,integral: " + integral+ " , derivative:" + derivative)
+	ERROR = error
+	return out
 
-ot = time.time()
-COUNTER = 0
-while(time.time() - ot < 1):
-	COUNTER = COUNTER + 1
-#print COUNTER
-
+forward(60)
 '''
 for i in range(0,4):
 	forward(40)
