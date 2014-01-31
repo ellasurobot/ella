@@ -21,7 +21,6 @@ K_p = 0
 K_i = 0
 K_d = 0
 
-
 BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
 def forward(distance_cm):
@@ -45,23 +44,38 @@ def turn(degrees):
 #		print BrickPi.Encoder[PORT_A] - curr_degree , degrees * ROTATIONS_PER_DEGREE
 		BrickPiUpdateValues() 
 
-TOTAL_ERROR = 0
-LAST_ERROR = 0
-
 def error():
 	desired = BrickPi.Encoder[PORT_A]	
 	expected = BrickPi.Encoder[PORT_B]
 	e = desired - expected
-	LAST_ERROR = e
+  return e
+	ERROR = e
 	TOTAL_ERROR += e
+
+TOTAL_ERROR = 0
+ERROR = 0
+
+#proportional
+def derivative(e1, e2):
+  return e1 - e2
+
+#proportional
+def integral()
+  return TOTAL_ERROR
 
 def control():
 	e = error()
-	K_p * error + K_i 
-	
+  deriv = derivative(e, ERROR)
+  TOTAL_ERROR += e
+  integr = integral()
+	out = K_p * error + K_i*integral + K_d * derivative
 
-forward(40)
-turn(90)
+ot = time.time()
+COUNTER = 0
+while(time.time() - ot < 1):
+  COUNTER++
+print COUNTER
+
 '''
 for i in range(0,4):
 	forward(40)
