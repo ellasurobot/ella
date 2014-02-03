@@ -8,7 +8,8 @@ class Robot:
 		BrickPiSetup()  # setup the serial port for communication
 
 		self.__motorA = Motor("PORT_A") 
-		self.__motorB = Motor("PORT_B") 
+		self.__motorB = Motor("PORT_B")
+
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
 	def forward(self, distance):  # distance is in cm
@@ -27,10 +28,11 @@ class Robot:
 		BrickPiUpdateValues()
 		initial_rotation = reference_motor.update_and_return_initial_rotation()
 		other_motor.set_initial_rotation()
-		initial_time = time.time()
+		reference_motor.set_start_rotation()
+		other_motor.set_start_rotation()
+		self.initial_time = time.time()
 		while (reference_motor.get_current_rotation() - initial_rotation < degrees_to_turn):
-			self.adjust_speed(reference_motor, other_motor, initial_time, movement)
-			initial_time = time.time()
+			self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			BrickPiUpdateValues()
 
 	# Adjust the speed of other motor according to the reference motor
@@ -41,17 +43,19 @@ class Robot:
 			self.control(reference_motor, other_motor, time_difference, movement)
 			reference_motor.set_initial_rotation()
 			other_motor.set_initial_rotation()
+			self.initial_time = time.time()
 
 	def control(self, reference_motor, other_motor, time_difference, movement):
 		speed_a = self.get_speed(reference_motor, time_difference)
 		speed_b = self.get_speed(other_motor, time_difference)
 		error = speed_a - speed_b
 		derivative = (error - self.error)/time_difference
-		print("A: ", reference_motor.get_initial_rotation(), "B: ", other_motor.get_initial_rotation())
-		integral = (reference_motor.get_current_rotation() - reference_motor.get_initial_rotation()) - (other_motor.get_current_rotation() - other_motor.get_initial_rotation())
+		print("A: ", reference_motor.get_start_rotation(), "B: ", other_motor.get_start_rotation())
+		integral = (reference_motor.get_current_rotation() - reference_motor.get_start_rotation()) - (other_motor.get_current_rotation() - other_motor.get_start_rotation())
 		k_p, k_i , k_d = self.get_constants(movement)
 		out = k_p * error + k_i * integral + k_d * derivative
 		new_speed = int(out + other_motor.get_speed())
+		print(k_p, k_i, k_d)
 		print("curr speed: ", other_motor.get_speed(),"out: ", out,"error: ", error,"deriv:", derivative,"integral: ", integral,"new speed ", new_speed, "speed_a ", speed_a, "speed_b ", speed_b,"time ", time_difference)
 		other_motor.set_speed(new_speed)
 		self.error = error

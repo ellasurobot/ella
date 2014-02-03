@@ -28,3 +28,9 @@ class Motor:
 
 	def set_initial_rotation(self):
 		self.__initial_rotation = self.get_current_rotation()
+
+	def set_start_rotation(self):
+		self.__start_rotation = self.get_current_rotation()
+
+	def get_start_rotation(self):
+		return self.__start_rotation
