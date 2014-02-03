@@ -11,12 +11,6 @@ from Robot import *
 
 robot = Robot()
 
-SLEEP_TIME = 1.5	# sleep 1.5s between each move
-DISTANCE = 40		# move forward in cm
-DEGREES = 90	# turn to the right in degrees
+DEGREES = 90		# move forward in cm
 
-for i in range(0,4):
-	robot.forward(DISTANCE)
-	time.sleep(SLEEP_TIME)
-	robot.turn(DEGREES)
-	time.sleep(SLEEP_TIME)
+robot.turn(DEGREES)
