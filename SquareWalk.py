@@ -10,7 +10,7 @@
 from Robot import *
 
 robot = Robot()
-robot.forward(50)
+robot.forward(40)
 '''
 SLEEP_TIME = 1.5	# sleep 1.5s between each move
 DISTANCE = 40		# move forward in cm

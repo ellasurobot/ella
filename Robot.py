@@ -19,7 +19,7 @@ class Robot:
 	def turn(self, degrees): #degrees in encoder degree
 		index = (degrees - abs(degrees)) + 1
 		self.__motorA.set_speed(index * TURN_SPEED)
-		self.__motorB.set_speed(-1 * index * TURN_SPEED_B)
+		self.__motorB.set_speed(-1 * index * TURN_SPEED)
 		self.run_motor(self.__motorA, self.__motorB, ROTATIONS_PER_DEGREE * degrees, "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
@@ -47,11 +47,12 @@ class Robot:
 		speed_b = self.get_speed(other_motor, time_difference)
 		error = speed_a - speed_b
 		derivative = (error - self.error)/time_difference
-		integral = math.fabs(reference_motor.get_current_rotation() - reference_motor.get_initial_rotation()) - math.fabs(other_motor.get_current_rotation() - other_motor.get_initial_rotation())
+		print("A: ", reference_motor.get_initial_rotation(), "B: ", other_motor.get_initial_rotation())
+		integral = (reference_motor.get_current_rotation() - reference_motor.get_initial_rotation()) - (other_motor.get_current_rotation() - other_motor.get_initial_rotation())
 		k_p, k_i , k_d = self.get_constants(movement)
 		out = k_p * error + k_i * integral + k_d * derivative
 		new_speed = int(out + other_motor.get_speed())
-		print("curr speed: ", reference_motor.get_speed(),"out: ", out,"error: ", error,"deriv:", derivative,"integral: ", integral,"new speed ", new_speed, "speed_a ", speed_a, "speed_b ", speed_b,"time ", time_difference)
+		print("curr speed: ", other_motor.get_speed(),"out: ", out,"error: ", error,"deriv:", derivative,"integral: ", integral,"new speed ", new_speed, "speed_a ", speed_a, "speed_b ", speed_b,"time ", time_difference)
 		other_motor.set_speed(new_speed)
 		self.error = error
 
@@ -59,6 +60,7 @@ class Robot:
 		curr = motor.get_current_rotation() 
 		init =  motor.get_initial_rotation()
 		rotation_difference = curr - init
+		print("curr: ", curr, "init: ", init)
 		return rotation_difference/time_difference
 
 	def get_constants(self, movement):
