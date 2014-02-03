@@ -9,13 +9,12 @@ class Motor:
 		port_number = port_dictionary[port]
 		self.__port = port_number
 		BrickPi.MotorEnable[port_number] = 1     #Enable the Motor
-		self.__initial_rotation = 0
 
 	def get_speed(self):
 		return BrickPi.MotorSpeed[self.__port]
 
 	def set_speed(self, speed):
-		BrickPi.MotorSpeed[self.__port] = speed
+		BrickPi.MotorSpeed[self.__port] = int(speed)
 		    
 	def get_current_rotation(self):
 		return BrickPi.Encoder[self.__port]

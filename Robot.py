@@ -9,7 +9,6 @@ class Robot:
 
 		self.__motorA = Motor("PORT_A") 
 		self.__motorB = Motor("PORT_B") 
-
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
 	def forward(self, distance):  # distance is in cm
@@ -24,11 +23,12 @@ class Robot:
 		self.run_motor(self.__motorA, self.__motorB, ROTATIONS_PER_DEGREE * degrees, "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
+		self.error = 0
 		BrickPiUpdateValues()
 		initial_rotation = reference_motor.update_and_return_initial_rotation()
+		other_motor.set_initial_rotation()
 		initial_time = time.time()
 		while (reference_motor.get_current_rotation() - initial_rotation < degrees_to_turn):
-			print("rotate")
 			self.adjust_speed(reference_motor, other_motor, initial_time, movement)
 			initial_time = time.time()
 			BrickPiUpdateValues()
@@ -38,25 +38,27 @@ class Robot:
 	def adjust_speed(self, reference_motor, other_motor, initial_time, movement):
 		time_difference = time.time() - initial_time
 		if (time_difference > TIME_DIFF):
-			self.control(reference_motor, other_motor, initial_time, movement)
+			self.control(reference_motor, other_motor, time_difference, movement)
 			reference_motor.set_initial_rotation()
 			other_motor.set_initial_rotation()
 
-	def control(self, reference_motor, other_motor, initial_time, movement):
-		global ERROR
-		time_difference = time.time() - initial_time
+	def control(self, reference_motor, other_motor, time_difference, movement):
 		speed_a = self.get_speed(reference_motor, time_difference)
 		speed_b = self.get_speed(other_motor, time_difference)
 		error = speed_a - speed_b
-		derivative = (error - ERROR)/time_difference
+		derivative = (error - self.error)/time_difference
 		integral = math.fabs(reference_motor.get_current_rotation() - reference_motor.get_initial_rotation()) - math.fabs(other_motor.get_current_rotation() - other_motor.get_initial_rotation())
 		k_p, k_i , k_d = self.get_constants(movement)
 		out = k_p * error + k_i * integral + k_d * derivative
-		other_motor.set_speed(int(other_motor.get_speed() + out))
-		ERROR = error
+		new_speed = int(out + other_motor.get_speed())
+		print("curr speed: ", reference_motor.get_speed(),"out: ", out,"error: ", error,"deriv:", derivative,"integral: ", integral,"new speed ", new_speed, "speed_a ", speed_a, "speed_b ", speed_b,"time ", time_difference)
+		other_motor.set_speed(new_speed)
+		self.error = error
 
 	def get_speed(self, motor, time_difference):
-		rotation_difference = motor.get_current_rotation() - motor.get_initial_rotation()
+		curr = motor.get_current_rotation() 
+		init =  motor.get_initial_rotation()
+		rotation_difference = curr - init
 		return rotation_difference/time_difference
 
 	def get_constants(self, movement):
