@@ -5,6 +5,11 @@ from Robot import *
 from Sensor import *
 import math
 
+MIN_SPEED = 80
+K_SONAR = 3
+DISTANCE_TRESHOLD = 50
+ARRAY_LENGTH = 15
+
 class SensorRobot(Robot):
 
 		def __init__(self):
@@ -31,5 +36,33 @@ class SensorRobot(Robot):
 						self.turn(-90)
 					BrickPiUpdateValues()
 								
-		def forward_bump(self, bump_distance):
-				print("buuuuuuuuuuump")
+		def forward_sonar(self, sonar_distance):
+			BrickPiUpdateValues()
+			actual_distance = self._sonar.get_value()
+			prev_values = [actual_distance]
+			print("actual dist", actual_distance)
+			while(actual_distance > sonar_distance):
+				speed = max(K_SONAR * (actual_distance - sonar_distance), MIN_SPEED)
+				print("sonar distance", self._sonar.get_value(), "actual dist", actual_distance, "speed: ", speed)
+				self._motorA.set_speed(speed)
+				self._motorB.set_speed(speed)
+				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
+				actual_distance = self.__get_median_distance(prev_values)
+				time.sleep(.01)
+				BrickPiUpdateValues()
+				
+
+		def __get_prev_values(self, prev_values, value):
+			if(value < prev_values[len(prev_values) -1] + DISTANCE_TRESHOLD):
+				if(len(prev_values) >= ARRAY_LENGTH):
+					prev_values.pop(0)
+				prev_values.append(value)
+				#print("prev_values", prev_values)
+			return prev_values
+
+		def __get_median_distance(self, prev_values):
+			#sorted_values = sorted(prev_values)
+			#return sorted_values[len(sorted_values)/2]
+			return sum(prev_values)/len(prev_values)				
+
+	
