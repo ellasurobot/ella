@@ -8,25 +8,25 @@ class Robot:
 	def __init__(self):
 		BrickPiSetup()  # setup the serial port for communication
 
-		self.__motorA = Motor("PORT_A") 
-		self.__motorB = Motor("PORT_B")
+		self._motorA = Motor("PORT_A") 
+		self._motorB = Motor("PORT_B")
 
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
 	def forward(self, distance):  # distance is in cm
 		index = (distance - abs(distance))/abs(distance) + 1
-		self.__motorA.set_speed(index * FORWARD_SPEED_A)
-		self.__motorB.set_speed(index * FORWARD_SPEED_B)
+		self._motorA.set_speed(index * FORWARD_SPEED_A)
+		self._motorB.set_speed(index * FORWARD_SPEED_B)
 		if (distance > 0):
-			self.run_motor(self.__motorA, self.__motorB, ROTATIONS_PER_CM * math.fabs(distance), "forward")
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance), "forward")
 		else:
-			self.run_motor(self.__motorA, self.__motorB, ROTATIONS_PER_CM * math.fabs(distance), "backward")
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance), "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
 		index = (degrees - abs(degrees))/abs(degrees) + 1
-		self.__motorB.set_speed(index * TURN_SPEED)
-		self.__motorA.set_speed(-1 * index * TURN_SPEED)
-		self.run_motor(self.__motorA, self.__motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees), "turn")		
+		self._motorB.set_speed(index * TURN_SPEED)
+		self._motorA.set_speed(-1 * index * TURN_SPEED)
+		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees), "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
 		self.error = 0

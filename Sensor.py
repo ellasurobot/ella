@@ -5,7 +5,8 @@ class Sensor:
         	port_dictionary = {
                     "PORT_1":PORT_1,
                     "PORT_2":PORT_2,
-                    "PORT_3":PORT_3
+                    "PORT_3":PORT_3,
+										"PORT_4":PORT_4
                     }
                 type_dictionary = {
                     "touch":TYPE_SENSOR_TOUCH,

@@ -7,7 +7,7 @@
 # This code is for testing the BrickPi with a Lego Motor 
 
 #from Moves import forward, turn
-from Robot import *
+from SensorRobot import *
 
 robot = SensorRobot()
-robot.forward()
+robot.forward_touch_sensor()
