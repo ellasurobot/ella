@@ -1,6 +1,7 @@
 from Motor import *
 from MotorSettings import*
 from RobotSettings import *
+from BrickPi import *
 import math
 
 class Robot:
