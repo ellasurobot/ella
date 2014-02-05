@@ -10,7 +10,6 @@ class Robot:
 
 		self._motorA = Motor("PORT_A") 
 		self._motorB = Motor("PORT_B")
-
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
 	def forward_simple(self, distance):

@@ -7,6 +7,7 @@ import math
 
 MIN_SPEED = 80
 K_SONAR = 3
+K_WALL = 3
 DISTANCE_TRESHOLD = 50
 ARRAY_LENGTH = 15
 
@@ -17,6 +18,7 @@ class SensorRobot(Robot):
 				self._left_touch = Sensor("PORT_2", "touch")
 				self._right_touch = Sensor("PORT_4", "touch")
 				self._sonar = Sensor("PORT_1", "sonar")
+				self.error = 0
 				BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
 
 		def forward_touch_sensor(self):
@@ -52,7 +54,7 @@ class SensorRobot(Robot):
 				self._motorA.set_speed(speed)
 				self._motorB.set_speed(speed)
 				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
-				actual_distance = self.__get_median_distance(prev_values)
+				actual_distance = self.__get_mean_distance(prev_values)
 				time.sleep(.01)
 				BrickPiUpdateValues()	
 
@@ -60,33 +62,37 @@ class SensorRobot(Robot):
 			BrickPiUpdateValues()
 			actual_distance = self._sonar.get_value()
 			prev_values = [actual_distance]
-			print("actual dist", actual_distance)
 			while(True):
 				if(actual_distance > distance):
-					speed = K_SONAR * (actual_distance - distance)
-					print("sonar distance", self._sonar.get_value(), "actual dist", actual_distance, "speed: ", speed)
+					speed = K_WALL * (actual_distance - distance)
 				elif abs(actual_distance - distance) <= 1:
 					speed = 0
 				else:
-					speed = K_SONAR * (actual_distance - distance)
-				self._motorA.set_speed(FOLLOW_WALL_SPEED - speed)
+					speed = K_WALL * (actual_distance - distance)
+#				self._motorA.set_speed(FOLLOW_WALL_SPEED - speed)
+				self._motorA.set_speed(FOLLOW_WALL_SPEED)
 				self._motorB.set_speed(FOLLOW_WALL_SPEED + speed)
-				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
-				actual_distance = self.__get_median_distance(prev_values)
-				time.sleep(.01)
+				print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
 				BrickPiUpdateValues()	
+				time.sleep(.02)
+#				self._motorA.set_speed(FOLLOW_WALL_SPEED + speed/2)
+				self._motorB.set_speed(FOLLOW_WALL_SPEED - speed + 5)
+				BrickPiUpdateValues()	
+				print("   speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
+				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
+				actual_distance = self.__get_mean_distance(prev_values)
+				time.sleep(.01)
+				BrickPiUpdateValues()
 
 		def __get_prev_values(self, prev_values, value):
-			if(value < prev_values[len(prev_values) -1] + DISTANCE_TRESHOLD):
+			if(value < prev_values[len(prev_values) -1] + 10):
 				if(len(prev_values) >= ARRAY_LENGTH):
 					prev_values.pop(0)
 				prev_values.append(value)
 				#print("prev_values", prev_values)
 			return prev_values
 
-		def __get_median_distance(self, prev_values):
-			#sorted_values = sorted(prev_values)
-			#return sorted_values[len(sorted_values)/2]
+		def __get_mean_distance(self, prev_values):
 			return sum(prev_values)/len(prev_values)				
 
 	
