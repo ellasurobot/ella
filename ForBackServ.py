@@ -11,4 +11,5 @@ from SensorRobot import *
 
 robot = SensorRobot()
 #robot.forward_sonar(30)
-robot.forward_sonar(30)
+###robot.forward_sonar(30)
+robot.wall_walking(30)

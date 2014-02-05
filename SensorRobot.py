@@ -56,6 +56,26 @@ class SensorRobot(Robot):
 				time.sleep(.01)
 				BrickPiUpdateValues()	
 
+		def wall_walking(self, distance):
+			BrickPiUpdateValues()
+			actual_distance = self._sonar.get_value()
+			prev_values = [actual_distance]
+			print("actual dist", actual_distance)
+			while(True):
+				if(actual_distance > distance):
+					speed = K_SONAR * (actual_distance - distance)
+					print("sonar distance", self._sonar.get_value(), "actual dist", actual_distance, "speed: ", speed)
+				elif abs(actual_distance - distance) <= 1:
+					speed = 0
+				else:
+					speed = K_SONAR * (actual_distance - distance)
+				self._motorA.set_speed(FOLLOW_WALL_SPEED - speed)
+				self._motorB.set_speed(FOLLOW_WALL_SPEED + speed)
+				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
+				actual_distance = self.__get_median_distance(prev_values)
+				time.sleep(.01)
+				BrickPiUpdateValues()	
+
 		def __get_prev_values(self, prev_values, value):
 			if(value < prev_values[len(prev_values) -1] + DISTANCE_TRESHOLD):
 				if(len(prev_values) >= ARRAY_LENGTH):
