@@ -13,8 +13,24 @@ class Robot:
 
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 
+	def forward_simple(self, distance):
+		index = self.direction(distance)
+		self._motorA.set_speed(100*index)
+		self._motorB.set_speed(100*index)
+		BrickPiUpdateValues()
+		x = self._motorA.set_initial_rotation()
+		print(self._motorA.get_current_rotation())
+		degrees_to_turn = abs(distance) * ROTATIONS_PER_CM
+		degrees_turned = 0 
+		while(degrees_turned < degrees_to_turn):
+			degrees_turned = abs(self._motorA.get_current_rotation() - self._motorA.get_initial_rotation())
+			BrickPiUpdateValues()
+
+	def direction(self, distance):
+		return ((distance)/abs(distance))
+
 	def forward(self, distance):  # distance is in cm
-		index = (distance - abs(distance))/abs(distance) + 1
+		index = self.direction(distance) 
 		self._motorA.set_speed(index * FORWARD_SPEED_A)
 		self._motorB.set_speed(index * FORWARD_SPEED_B)
 		if (distance > 0):
@@ -23,7 +39,7 @@ class Robot:
 			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance), "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
-		index = (degrees - abs(degrees))/abs(degrees) + 1
+		index = self.direction(degrees) 
 		self._motorB.set_speed(index * TURN_SPEED)
 		self._motorA.set_speed(-1 * index * TURN_SPEED)
 		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees), "turn")		
@@ -57,14 +73,11 @@ class Robot:
 		speed_b = self.get_speed(other_motor, time_difference)
 		error = speed_a - speed_b
 		derivative = (error - self.error)/time_difference
-#		print("A: ", reference_motor.get_start_rotation(), "B: ", other_motor.get_start_rotation())
 		integral = (reference_motor.get_current_rotation() - reference_motor.get_start_rotation()) - (other_motor.get_current_rotation() - other_motor.get_start_rotation())
 		k_p, k_i , k_d = self.get_constants(movement)
 		out = k_p * error + k_i * integral + k_d * derivative
 		new_speed = int(out + other_motor.get_speed())
-		print(reference_motor.get_current_rotation())
-#		print(k_p, k_i, k_d)
-		print("curr speed: ", other_motor.get_speed(),"out: ", out,"error: ", error,"deriv:", derivative,"integral: ", integral,"new speed ", new_speed, "speed_a ", speed_a, "speed_b ", speed_b,"time ", time_difference)
+		#print("curr speed: ", other_motor.get_speed(),"out: ", out,"error: ", error,"deriv:", derivative,"integral: ", integral,"new speed ", new_speed, "speed_a ", speed_a, "speed_b ", speed_b,"time ", time_difference)
 		other_motor.set_speed(new_speed)
 		self.error = error
 
@@ -72,7 +85,6 @@ class Robot:
 		curr = motor.get_current_rotation() 
 		init =  motor.get_initial_rotation()
 		rotation_difference = curr - init
-#		print("curr: ", curr, "init: ", init)
 		return math.fabs(rotation_difference/time_difference)
 
 	def get_constants(self, movement):

@@ -26,13 +26,13 @@ class SensorRobot(Robot):
 					left_bumped = self._left_touch.get_value()
 					right_bumped = self._right_touch.get_value()
 					if (left_bumped and right_bumped):
-						self.forward(-10)
+						self.forward_simple(-10)
 						self.turn(90)
 					elif (left_bumped):
-						self.forward(-10)
+						self.forward_simple(-10)
 						self.turn(90)
 					elif (right_bumped):
-						self.forward(-10)
+						self.forward_simple(-10)
 						self.turn(-90)
 					BrickPiUpdateValues()
 								
