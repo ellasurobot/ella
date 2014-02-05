@@ -11,4 +11,4 @@ from SensorRobot import *
 
 robot = SensorRobot()
 #robot.forward_sonar(30)
-robot.forward_touch_sensor();
+robot.forward_sonar(30)

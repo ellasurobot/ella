@@ -1,4 +1,4 @@
-from Motor import *
+from Motor import * 
 from MotorSettings import*
 from RobotSettings import *
 from Robot import *
@@ -36,21 +36,25 @@ class SensorRobot(Robot):
 						self.turn(-90)
 					BrickPiUpdateValues()
 								
-		def forward_sonar(self, sonar_distance):
+		def forward_sonar(self, distance):
 			BrickPiUpdateValues()
 			actual_distance = self._sonar.get_value()
 			prev_values = [actual_distance]
 			print("actual dist", actual_distance)
-			while(actual_distance > sonar_distance):
-				speed = max(K_SONAR * (actual_distance - sonar_distance), MIN_SPEED)
-				print("sonar distance", self._sonar.get_value(), "actual dist", actual_distance, "speed: ", speed)
+			while(True):
+				if(actual_distance > distance):
+					speed = K_SONAR * (actual_distance - distance) + MIN_SPEED
+					print("sonar distance", self._sonar.get_value(), "actual dist", actual_distance, "speed: ", speed)
+				elif abs(actual_distance - distance) <= 1:
+					speed = 0
+				else:
+					speed = K_SONAR * (actual_distance - distance) - MIN_SPEED
 				self._motorA.set_speed(speed)
 				self._motorB.set_speed(speed)
 				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
 				actual_distance = self.__get_median_distance(prev_values)
 				time.sleep(.01)
-				BrickPiUpdateValues()
-				
+				BrickPiUpdateValues()	
 
 		def __get_prev_values(self, prev_values, value):
 			if(value < prev_values[len(prev_values) -1] + DISTANCE_TRESHOLD):
