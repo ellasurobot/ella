@@ -7,7 +7,7 @@ import math, time
 
 MIN_SPEED = 80
 K_SONAR = 3
-K_WALL = 3
+K_WALL = 2
 DISTANCE_TRESHOLD = 50
 ARRAY_LENGTH = 15
 
@@ -62,6 +62,7 @@ class SensorRobot(Robot):
 			BrickPiUpdateValues()
 			actual_distance = self._sonar.get_value()
 			prev_values = [actual_distance]
+
 			while(True):
 				walk_time = time.time()
 			#	if(actual_distance > distance):
@@ -73,13 +74,13 @@ class SensorRobot(Robot):
 				speed = K_WALL * (actual_distance - distance)
 				self.set_recover_speed(speed)
 				print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
-				while(time.time() - walk_time < 0.2):
-					pass
-				walk_time = time.time()
-				self.set_recover_speed(-speed)
-				print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
-				while(time.time() - walk_time < 0.2):
-					pass
+#				while(time.time() - walk_time < 0.2):
+#					pass
+#				walk_time = time.time()
+#				self.set_recover_speed(-speed)
+#				print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
+#				while(time.time() - walk_time < 0.2):
+#					pass
 				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
 				actual_distance = self.__get_mean_distance(prev_values)
 				BrickPiUpdateValues()
