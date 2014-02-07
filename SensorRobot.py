@@ -91,7 +91,7 @@ class SensorRobot(Robot):
 
 		def wall_walking_2(self, distance):
 			self.set_recover_speed_2(0)
-			K = 5
+			K = 7
 			while(True):
 				if(True):
 					BrickPiUpdateValues()
