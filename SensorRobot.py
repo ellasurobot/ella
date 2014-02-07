@@ -58,6 +58,36 @@ class SensorRobot(Robot):
 				time.sleep(.01)
 				BrickPiUpdateValues()	
 
+		def wall_walking_2(self, distance):
+			self._motorA.set_speed(120)
+			self._motorB.set_speed(130)
+			self.set_recover_speed_2(0)
+			prev_distance = self._sonar.get_value() 
+			prev_time = time.time()
+			K = 2
+			while(True):
+				if(time.time() - prev_time > 0.05):
+					BrickPiUpdateValues()
+					distance = self._sonar.get_value()
+					diff = distance - prev_distance
+					print("distance: ", distance ," diff: ", diff, "\n")
+					print("speed_A: ", self._motorA.get_speed(), "speed b: ", self._motorB.get_speed()) 
+					print()
+					if(distance < 200):
+						if(diff > 0):
+							self.set_recover_speed_2(-1 * diff * K)
+						else:
+							self.set_recover_speed_2(diff * K)
+						prev_time = time.time()
+						prev_distance = distance
+
+		def set_recover_speed_2(self, speed):
+			self._motorA.set_speed(self._motorA.get_speed() - speed)
+			self._motorB.set_speed(self._motorB.get_speed() + speed)
+			BrickPiUpdateValues()	
+
+
+				
 		def wall_walking(self, distance):
 			BrickPiUpdateValues()
 			actual_distance = self._sonar.get_value()
