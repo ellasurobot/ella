@@ -81,7 +81,6 @@ class SensorRobot(Robot):
 							while(time.time() - prev_time < 0.1):
 								BrickPiUpdateValues()
 							self.set_recover_speed_2(0)
-
 							print("DONE")
 
 			prev_time = time.time()
@@ -92,36 +91,32 @@ class SensorRobot(Robot):
 
 		def wall_walking_2(self, distance):
 			self.set_recover_speed_2(0)
-			K = 3
+			K = 5
 			while(True):
 				if(True):
 					BrickPiUpdateValues()
 					curr_distance = self._sonar.get_value()
 					diff = curr_distance - distance
-#					diff = math.copysign(min(abs(diff), 4),diff)
+					diff = math.copysign(min(abs(diff), 4),diff)
 					print()
 					if(curr_distance < 200):
 						if(diff != 0):
 							correction = K * diff
-							self.set_recover_speed_2(correction)
-							print("distance: ", curr_distance ," diff: ", diff)
-							print("speed_A: ", self._motorA.get_speed(), "speed b: ", self._motorB.get_speed()) 
-							prev_time = time.time()
-							while(time.time() - prev_time < 0.05):
-								BrickPiUpdateValues()
-			#				self.set_recover_speed_2(0)
-			#				prev_time = time.time()
-			#				while(time.time() - prev_time < 0.3):
-			#					BrickPiUpdateValues()
-							self.set_recover_speed_2(-correction)
-							print("distance: ", curr_distance ," diff: ", diff)
-							print("speed_A: ", self._motorA.get_speed(), "speed b: ", self._motorB.get_speed()) 
-							prev_time = time.time()
-							while(time.time() - prev_time < 0.05):
-								BrickPiUpdateValues()
-							self.set_recover_speed_2(0)
 
+					self.set_recover_speed_2(1.5*correction)
+					print("diff: ", diff, "correction: ", correction, "speeda: ", self._motorA.get_speed(), "speedb: ", self._motorB.get_speed())
+					prev_time = time.time()
+					while(time.time() - prev_time < 0.2):
+						BrickPiUpdateValues()
+					self.set_recover_speed_2(0)
+					self.set_recover_speed_2(-correction)
+					prev_time = time.time()
+					while(time.time() - prev_time < 0.2):
+						BrickPiUpdateValues()
+					self.set_recover_speed_2(0)
+										
 		def set_recover_speed_2(self, speed):
+			
 			self._motorA.set_speed(123 - speed)
 			self._motorB.set_speed(120 + speed)
 			BrickPiUpdateValues()	
