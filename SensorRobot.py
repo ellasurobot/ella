@@ -62,27 +62,24 @@ class SensorRobot(Robot):
 			BrickPiUpdateValues()
 			actual_distance = self._sonar.get_value()
 			prev_values = [actual_distance]
-
+			self.set_recover_speed(0)
 			while(True):
 				walk_time = time.time()
-			#	if(actual_distance > distance):
-			#		speed = K_WALL * (actual_distance - distance)
-			#	elif abs(actual_distance - distance) <= 1:
-			#		speed = 0
-			#	else:
-			#		speed = K_WALL * (actual_distance)
 				speed = K_WALL * (actual_distance - distance)
-				self.set_recover_speed(speed)
-				print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
-#				while(time.time() - walk_time < 0.2):
-#					pass
-#				walk_time = time.time()
-#				self.set_recover_speed(-speed)
-#				print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
+				if(abs(speed) > 4):
+					self.set_recover_speed(speed)
+					print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
+					print("START WAIT\n")
+					while(time.time() - walk_time < 0.2):
+						pass
+					print("END WAIT\n")
+					walk_time = time.time()
+					self.set_recover_speed(-speed)
+					print("speed_a", self._motorA.get_speed(), "speed_b", self._motorB.get_speed(), "distance", actual_distance, "sonar", self._sonar.get_value(), "speed", speed)
 #				while(time.time() - walk_time < 0.2):
 #					pass
 				prev_values = self.__get_prev_values(prev_values, self._sonar.get_value())
-				actual_distance = self.__get_mean_distance(prev_values)
+				actual_distance = prev_values[len(prev_values)-1]
 				BrickPiUpdateValues()
 
 		def set_recover_speed(self, speed):
@@ -92,7 +89,7 @@ class SensorRobot(Robot):
 
 
 		def __get_prev_values(self, prev_values, value):
-			if(value < prev_values[len(prev_values) -1] + 10):
+			if(value < prev_values[len(prev_values) -1] + DISTANCE_TRESHOLD):
 				if(len(prev_values) >= ARRAY_LENGTH):
 					prev_values.pop(0)
 				prev_values.append(value)
