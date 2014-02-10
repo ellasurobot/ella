@@ -15,9 +15,9 @@ class SensorRobot(Robot):
 
 		def __init__(self):
 				Robot.__init__(self)
-				self._left_touch = Sensor("PORT_2", "touch")
-				self._right_touch = Sensor("PORT_4", "touch")
-				self._sonar = Sensor("PORT_1", "sonar")
+				self._left_touch = Sensor("PORT_1", "touch")
+				self._right_touch = Sensor("PORT_2", "touch")
+				self._sonar = Sensor("PORT_4", "sonar")
 				self.error = 0
 				BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
 
@@ -96,6 +96,7 @@ class SensorRobot(Robot):
 				if(True):
 					BrickPiUpdateValues()
 					curr_distance = self._sonar.get_value()
+					print("curr_distance: ", curr_distance)
 					diff = curr_distance - distance
 					diff = math.copysign(min(abs(diff), 4),diff)
 					print()

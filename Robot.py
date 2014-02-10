@@ -14,11 +14,10 @@ class Robot:
 
 	def forward_simple(self, distance):
 		index = self.direction(distance)
-		self._motorA.set_speed(100*index)
-		self._motorB.set_speed(100*index)
+		self._motorA.set_speed(FORWARD_SPEED_A*index)
+		self._motorB.set_speed(FORWARD_SPEED_B*index)
 		BrickPiUpdateValues()
 		x = self._motorA.set_initial_rotation()
-		print(self._motorA.get_current_rotation())
 		degrees_to_turn = abs(distance) * ROTATIONS_PER_CM
 		degrees_turned = 0 
 		while(degrees_turned < degrees_to_turn):
