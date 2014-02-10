@@ -2,12 +2,14 @@ from Motor import *
 from MotorSettings import*
 from RobotSettings import *
 from BrickPi import *
+from Particle import*
 import math
+import random
 
 class Robot:
 	def __init__(self):
 		BrickPiSetup()  # setup the serial port for communication
-
+		self._particles = [Particle() for i in range(100)]
 		self._motorA = Motor("PORT_A") 
 		self._motorB = Motor("PORT_B")
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
@@ -51,11 +53,26 @@ class Robot:
 		other_motor.set_start_rotation()
 		self.initial_time = time.time()
 		init_time = self.initial_time
+		last_rotation = reference_motor.get_current_rotation()
 		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn):
+			curr_rotation = reference_motor.get_current_rotation()
+			if movement == "forward":
+				distance_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_CM
+				for particle in self._particles:
+					particle.update_distance(distance_moved + random.randint(-5,5), random.randint(-5, 5))
+			elif movement == "turn":
+				degree_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
+				for particle in self._particles:
+					particle.update_rotation(random.randint(-5, 5))
+			last_rotation = curr_rotation
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			BrickPiUpdateValues()
+			print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
 
+	def particle_to_tuple(self, particle):
+		return particle.draw()
+	
 	# Adjust the speed of other motor according to the reference motor
 	# using the PID algorithm
 	def adjust_speed(self, reference_motor, other_motor, initial_time, movement):
