@@ -115,13 +115,10 @@ class SensorRobot(Robot):
 					while(time.time() - prev_time < 0.2):
 						BrickPiUpdateValues()
 					self.set_recover_speed_2(0)
-					if(diff_o > 10):
-						prev_time = time.time()
-						while(time.time() - prev_time < 0.2):
-							BrickPiUpdateValues()
-					interval = 0.2
-					if(diff > 10):
-						interval = 0.32
+					prev_time = time.time()
+					while(time.time() - prev_time < (0.2 * diff/6)):
+						BrickPiUpdateValues()
+					interval = 0.2 + 0.1 * diff/6
 					self.set_recover_speed_2(-1*correction)
 					prev_time = time.time()
 					while(time.time() - prev_time < interval):
