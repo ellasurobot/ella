@@ -6,10 +6,12 @@ from Particle import*
 import math
 import random
 
+NUMBER_OF_PARTICLES = 2
+
 class Robot:
 	def __init__(self):
 		BrickPiSetup()  # setup the serial port for communication
-		self._particles = [Particle() for i in range(100)]
+		self._particles = [Particle(1.0/NUMBER_OF_PARTICLES) for i in range(NUMBER_OF_PARTICLES)]
 		self._motorA = Motor("PORT_A") 
 		self._motorB = Motor("PORT_B")
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
@@ -54,21 +56,29 @@ class Robot:
 		self.initial_time = time.time()
 		init_time = self.initial_time
 		last_rotation = reference_motor.get_current_rotation()
+		last_update_time = 0
 		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn):
 			curr_rotation = reference_motor.get_current_rotation()
-			if movement == "forward":
-				distance_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_CM
-				for particle in self._particles:
-					particle.update_distance(distance_moved + random.randint(-5,5), random.randint(-5, 5))
-			elif movement == "turn":
-				degree_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
-				for particle in self._particles:
-					particle.update_rotation(random.randint(-5, 5))
-			last_rotation = curr_rotation
+			if (time.time() - last_update_time > 0.5):
+				if movement == "forward":
+					distance_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_CM
+					for particle in self._particles:
+						particle.update_distance(distance_moved + self.get_random(4), self.get_random(2))
+				elif movement == "turn":
+					degree_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
+					for particle in self._particles:
+						particle.update_rotation(self.get_random(2))
+				last_rotation = curr_rotation
+				last_update_time = time.time()
+				print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+				print str(map(self.particle_to_tuple, self._particles))
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			BrickPiUpdateValues()
-			print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+			
+
+	def get_random(self, n):
+		return random.gauss(0, n)
 
 	def particle_to_tuple(self, particle):
 		return particle.draw()
