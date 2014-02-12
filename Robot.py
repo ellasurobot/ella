@@ -6,7 +6,7 @@ from Particle import*
 import math
 import random
 
-NUMBER_OF_PARTICLES = 2
+NUMBER_OF_PARTICLES = 100 
 
 class Robot:
 	def __init__(self):
@@ -59,19 +59,24 @@ class Robot:
 		last_update_time = 0
 		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn):
 			curr_rotation = reference_motor.get_current_rotation()
-			if (time.time() - last_update_time > 0.5):
-				if movement == "forward":
-					distance_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_CM
+			curr_time = time.time()
+			if movement == "forward":
+				if (curr_time - last_update_time > 0.5):
+					distance_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_CM
 					for particle in self._particles:
-						particle.update_distance(distance_moved + self.get_random(4), self.get_random(2))
-				elif movement == "turn":
-					degree_moved = (curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
-					for particle in self._particles:
-						particle.update_rotation(self.get_random(2))
+						f = self.get_random(1)
+						e = self.get_random(1)
+						particle.update_distance(distance_moved + e, f)
+					last_rotation = curr_rotation
+					last_update_time = curr_time
+			if movement == "turn":
+				degree_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
+				for particle in self._particles:
+					particle.update_rotation(self.get_random(2) + degree_moved)
 				last_rotation = curr_rotation
-				last_update_time = time.time()
-				print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
-				print str(map(self.particle_to_tuple, self._particles))
+				last_update_time = curr_time
+			print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+			print str(map(self.particle_to_tuple, self._particles))
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			BrickPiUpdateValues()
