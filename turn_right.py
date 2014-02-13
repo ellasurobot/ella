@@ -11,6 +11,6 @@ from Robot import *
 
 robot = Robot()
 
-DEGREES = 40		# move forward in cm
+DEGREES = 90		# move forward in cm
 
 robot.turn(DEGREES)

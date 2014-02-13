@@ -4,9 +4,8 @@ from RobotSettings import *
 from BrickPi import *
 from Particle import*
 import math
-import random
 
-NUMBER_OF_PARTICLES = 100 
+NUMBER_OF_PARTICLES = 1 
 
 class Robot:
 	def __init__(self):
@@ -56,34 +55,40 @@ class Robot:
 		self.initial_time = time.time()
 		init_time = self.initial_time
 		last_rotation = reference_motor.get_current_rotation()
-		last_update_time = 0
+		add_degrees = 0
 		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn):
 			curr_rotation = reference_motor.get_current_rotation()
-			curr_time = time.time()
-			if movement == "forward":
-				if (curr_time - last_update_time > 0.5):
-					distance_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_CM
-					for particle in self._particles:
-						f = self.get_random(1)
-						e = self.get_random(1)
-						particle.update_distance(distance_moved + e, f)
-					last_rotation = curr_rotation
-					last_update_time = curr_time
+			if movement == "forward" or movement == "backward":
+				distance_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_CM
+				self.move_forward(distance_moved)
 			if movement == "turn":
 				degree_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
-				for particle in self._particles:
-					particle.update_rotation(self.get_random(2) + degree_moved)
-				last_rotation = curr_rotation
-				last_update_time = curr_time
+				print("degree moved", degree_moved)
+				self.move_turn(degree_moved)
+				add_degrees += degree_moved
+
+			last_rotation = curr_rotation
 			print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
 			print str(map(self.particle_to_tuple, self._particles))
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			BrickPiUpdateValues()
-			
 
-	def get_random(self, n):
-		return random.gauss(0, n)
+		if movement == "turn":
+			degree_moved = math.fabs(reference_motor.get_current_rotation() - last_rotation)/ROTATIONS_PER_DEGREE
+			self.move_turn(degree_moved)
+
+		print ("rotation_diff: ", reference_motor.get_current_rotation() - initial_rotation, "degrees_to_turn: ", degrees_to_turn)
+		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+		print str(map(self.particle_to_tuple, self._particles))
+
+	def move_forward(self, distance_moved):
+		for particle in self._particles:
+			particle.update_distance(distance_moved)
+
+	def move_turn(self, degree_moved):
+		for particle in self._particles:
+			particle.update_rotation(degree_moved)
 
 	def particle_to_tuple(self, particle):
 		return particle.draw()
