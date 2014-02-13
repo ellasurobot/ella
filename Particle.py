@@ -3,6 +3,8 @@ import random
 
 ZOOM_FACTOR = 10
 ADJUSTED_DISTANCE = 0
+VAR_DISTANCE_FORWARD_PER_CM = 0.1
+VAR_TURN_FORWARD_PER_CM = 1
 
 class Particle:
 
@@ -13,8 +15,9 @@ class Particle:
 		self._weight = weight
 
 	def update_distance(self, distance_change):	
-		e = self.get_random(0)
-		f = self.get_random(0)
+		var_distance = VAR_DISTANCE_FORWARD_PER_CM*math.pow(distance_change,2)
+		e = self.get_random(var_distance)
+		f = self.get_random(1)
 		self._x += (distance_change + e) * math.cos(math.radians(self._theta)) * ZOOM_FACTOR
 		self._y += (distance_change + e) * math.sin(math.radians(self._theta)) * ZOOM_FACTOR
 		self._theta += f
