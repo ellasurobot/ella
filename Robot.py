@@ -5,7 +5,7 @@ from BrickPi import *
 from Particle import*
 import math
 
-NUMBER_OF_PARTICLES = 5
+NUMBER_OF_PARTICLES = 100
 
 class Robot:
 	def __init__(self):
@@ -23,7 +23,7 @@ class Robot:
 		x = self._motorA.set_initial_rotation()
 		degrees_to_turn = abs(distance) * ROTATIONS_PER_CM
 		degrees_turned = 0 
-		while(degrees_turned < degrees_to_turn):
+		while(degrees_turned < degrees_to_turn - 20):
 			degrees_turned = abs(self._motorA.get_current_rotation() - self._motorA.get_initial_rotation())
 			BrickPiUpdateValues()
 
@@ -43,7 +43,7 @@ class Robot:
 		index = self.direction(degrees) 
 		self._motorB.set_speed(index * TURN_SPEED)
 		self._motorA.set_speed(-1 * index * TURN_SPEED)
-		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees), "turn")		
+		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 5, "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
 		self.error = 0
@@ -57,11 +57,12 @@ class Robot:
 		last_rotation = reference_motor.get_current_rotation()
 		add_degrees = 0
 		temp = 0
-		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn - 4):
+		
+		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn - 20):
 			curr_rotation = reference_motor.get_current_rotation()
 			if movement == "forward" or movement == "backward":
 				distance_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_CM
-				temp += distance_moved
+				temp += 1
 				self.move_forward(distance_moved)
 			if movement == "turn":
 				degree_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
@@ -73,15 +74,19 @@ class Robot:
 			#print str(map(self.particle_to_tuple, self._particles))
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
+			curr_time = time.time()
 			BrickPiUpdateValues()
-		print("distance_moved :", temp)
+		print("count :", temp)
 		if movement == "turn":
 			degree_moved = math.fabs(reference_motor.get_current_rotation() - last_rotation)/ROTATIONS_PER_DEGREE
 			self.move_turn(degree_moved)
-
+		if movement == "forward" or movement == "backward":
+			distance_moved = math.fabs(reference_motor.get_current_rotation()- last_rotation)/ROTATIONS_PER_CM
+			self.move_forward(distance_moved)
 #		print ("rotation_diff: ", reference_motor.get_current_rotation() - initial_rotation, "degrees_to_turn: ", degrees_to_turn)
 #		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
 		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+		print str(map(self.particle_to_tuple, self._particles))
 
 	def move_forward(self, distance_moved):
 		for particle in self._particles:
