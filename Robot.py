@@ -56,20 +56,20 @@ class Robot:
 		init_time = self.initial_time
 		last_rotation = reference_motor.get_current_rotation()
 		add_degrees = 0
-		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn):
+		while (math.fabs(reference_motor.get_current_rotation() - initial_rotation) < degrees_to_turn - 4):
 			curr_rotation = reference_motor.get_current_rotation()
 			if movement == "forward" or movement == "backward":
 				distance_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_CM
 				self.move_forward(distance_moved)
 			if movement == "turn":
 				degree_moved = math.fabs(curr_rotation - last_rotation)/ROTATIONS_PER_DEGREE
-				print("degree moved", degree_moved)
+				#print("degree moved", degree_moved)
 				self.move_turn(degree_moved)
 				add_degrees += degree_moved
 
 			last_rotation = curr_rotation
 			print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
-			print str(map(self.particle_to_tuple, self._particles))
+			#print str(map(self.particle_to_tuple, self._particles))
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			BrickPiUpdateValues()
