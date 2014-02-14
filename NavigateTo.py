@@ -1,18 +1,15 @@
 from Robot import *
+from DrawSquare import *
 
 robot = Robot()
+draw_square(40)
+draw_assignment()
 
-DISTANCE = 40		# move forward in cm
-END_POINT = DISTANCE * 10 + 100 
+#robot.navigateToWaypoint(40, 0)
+#robot.navigateToWaypoint(40, 40)
+#robot.navigateToWaypoint(0, 40)
+#robot.navigateToWaypoint(0, 0)
 
-line1 = (100, 100, 100, END_POINT) # (x0, y0, x1, y1)
-line2 = (100, 100, END_POINT, 100)  # (x0, y0, x1, y1)
-line3 = (100, END_POINT, END_POINT, END_POINT) # (x0, y0, x1, y1)
-line4 = (END_POINT, 100, END_POINT, END_POINT) # (x0, y0, x1, y1)
-
-print "drawLine:" + str(line1)
-print "drawLine:" + str(line2)
-print "drawLine:" + str(line3)
-print "drawLine:" + str(line4)
-
-robot.navigateToWaypoint(0.0, DISTANCE)
+robot.navigateToWaypoint(50, 50)
+robot.navigateToWaypoint(50, -20)
+robot.navigateToWaypoint(0, 0)
