@@ -21,6 +21,13 @@ class SensorRobot(Robot):
 				self.error = 0
 				BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
 
+		def calibrate_sonar(self):
+			while(True):
+				actual_distance = self._sonar.get_value()
+				print("actual_distance:", actual_distance)
+				BrickPiUpdateValues()
+			
+
 		def forward_touch_sensor(self):
 				while(True):
 					self._motorA.set_speed(FORWARD_SPEED_A)

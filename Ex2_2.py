@@ -12,4 +12,5 @@ from SensorRobot import *
 robot = SensorRobot()
 #robot.forward_sonar(30)
 ###robot.forward_sonar(30)
-robot.forward_sonar(30)
+robot.calibrate_sonar()
+#robot.forward_sonar(30)
