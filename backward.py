@@ -13,4 +13,5 @@ robot = Robot()
 
 DISTANCE = 40		# move forward in cm
 
+robot.forward(DISTANCE)
 robot.forward(-DISTANCE)

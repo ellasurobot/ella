@@ -13,7 +13,7 @@ robot = Robot()
 
 SLEEP_TIME = 1.5	# sleep 1.5s between each move
 DISTANCE = 40		# move forward in cm
-DEGREES = 90	# turn to the right in degrees
+DEGREES = -90	# turn to the right in degrees
 ADJUSTED_DISTANCE = 100
 
 END_POINT = DISTANCE * 10 + ADJUSTED_DISTANCE

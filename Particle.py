@@ -33,7 +33,19 @@ class Particle:
 		self._theta %= 360
 
 	def draw(self):
-		return (self._x + 100, self._y + 100, self._theta)
+		return (self._x + 100, -self._y + 500, self._theta)
 
 	def get_random(self, n):
 		return random.gauss(0, n)
+
+	def get_x(self):
+		return self._x;
+
+	def get_y(self):
+		return self._y;
+
+	def get_theta(self):
+		return self._theta;
+
+	def get_weight(self):
+		return self._weight;
