@@ -35,20 +35,24 @@ class Robot:
 		self._motorA.set_speed(index * FORWARD_SPEED_A)
 		self._motorB.set_speed(index * FORWARD_SPEED_B)
 		if (distance > 0):
-			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance), "forward")
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 20, "forward")
 		else:
-			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance), "backward")
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 20, "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
-		index = self.direction(degrees) 
-		self._motorB.set_speed(-1 * index * TURN_SPEED)
+		index = self.direction(degrees)
+		increase = 1
+		if (degrees < 0):
+			increase = 1.5 
+		self._motorB.set_speed(-1 * index * TURN_SPEED*increase)
 		self._motorA.set_speed(index * TURN_SPEED)
-		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees), "turn")		
+		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
 		self.error = 0
 		BrickPiUpdateValues()
 		initial_rotation = reference_motor.update_and_return_initial_rotation()
+		initial_rotation_other = other_motor.update_and_return_initial_rotation()
 		other_motor.set_initial_rotation()
 		reference_motor.set_start_rotation()
 		other_motor.set_start_rotation()
@@ -67,12 +71,25 @@ class Robot:
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			curr_time = time.time()
 			BrickPiUpdateValues()
+		self._motorA.set_speed(0)
+		self._motorB.set_speed(0)
+		BrickPiUpdateValues()
+
 		rotations = reference_motor.get_current_rotation() - last_rotation 
 		self.update_particles(rotations, movement)
 		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
-		print str(map(self.particle_to_tuple, self._particles))
+		print("turned_total ", (reference_motor.get_current_rotation() - initial_rotation)/ROTATIONS_PER_DEGREE)
+		print("turned_degrees last", reference_motor.get_current_rotation() - initial_rotation)
+		curr_time = time.time()
+		count = 0
+#		while(count < 10):
+#			if(time.time() - curr_time > 0.1):
+#				BrickPiUpdateValues()
+#				print("turned_degrees A: ", count, ": ",  reference_motor.get_current_rotation() - initial_rotation)
+#				print("turned_degrees B: ", count, ": ",  other_motor.get_current_rotation() - initial_rotation_other)
+#				curr_time = time.time() 
+#				count += 1
 
-		print ("curr pos", self.get_current_position())
 
 	def update_particles(self, rotations, movement):
 		if movement == "forward" or movement == "backward":
@@ -108,8 +125,8 @@ class Robot:
 		initial_rotation = self._motorA.get_current_rotation()
 		(x_curr, y_curr, theta_curr) = self.get_current_position()
 		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
+		print("theta!: ", theta)
 		self.turn(theta)
-		rotation = self._motorA.get_current_rotation()
 		time.sleep(1)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
 		self.forward(distance)

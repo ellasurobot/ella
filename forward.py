@@ -9,10 +9,11 @@
 #from Moves import forward, turn
 from Robot import *
 from DrawSquare import *
+import sys
 
 robot = Robot()
 
-DISTANCE = 40		# move forward in cm
+DISTANCE = int(sys.argv[1])		# move forward in cm
 draw_square(DISTANCE)
 
 robot.forward(DISTANCE)

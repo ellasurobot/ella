@@ -8,9 +8,14 @@
 
 #from Moves import forward, turn
 from Robot import *
+import sys
 
 robot = Robot()
 
-DEGREES = 90		# move forward in cm
 
-robot.turn(-DEGREES)
+DEGREES =	int(sys.argv[1])# move forward in cm
+
+robot.turn(DEGREES)
+#robot.turn(DEGREES)
+#robot.turn(DEGREES)
+#robot.turn(DEGREES)

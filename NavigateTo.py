@@ -2,7 +2,7 @@ from Robot import *
 from DrawSquare import *
 
 robot = Robot()
-draw_square(40)
+#draw_square(40)
 draw_assignment()
 
 #robot.navigateToWaypoint(40, 0)
