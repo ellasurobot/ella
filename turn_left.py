@@ -11,7 +11,7 @@ from Robot import *
 import sys
 
 robot = Robot()
-
+#robot.hittingTheWallIn()
 
 DEGREES =	int(sys.argv[1])# move forward in cm
 

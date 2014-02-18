@@ -4,6 +4,7 @@ from RobotSettings import *
 from BrickPi import *
 from Particle import*
 import math
+from operator import attrgetter
 
 NUMBER_OF_PARTICLES = 100
 

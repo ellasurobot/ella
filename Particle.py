@@ -33,6 +33,9 @@ class Particle:
 		self._theta += theta_change + g
 		self._theta %= 360
 
+	def calculate_likelihood(x, y, theta, z):
+		pass
+
 	def draw(self):
 		return (self._x*ZOOM_FACTOR + ORIGIN_X, -self._y*ZOOM_FACTOR + ORIGIN_Y, self._theta)
 
@@ -50,3 +53,18 @@ class Particle:
 
 	def get_weight(self):
 		return self._weight;
+
+	def get_m(self, wall_map):
+		return sort(calculate_m, wall_map)
+
+	def calculate_m(self, wall):
+		Ax = wall[0]
+		Ay = wall[1]
+		Bx = wall[2]
+		By = wall[3] 
+		x = self._x
+		y = self._y
+		theta = self._theta
+		top = (Bx - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
+		bottom = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
+		return top / bottom    
