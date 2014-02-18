@@ -6,7 +6,7 @@ from Particle import*
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 100
+NUMBER_OF_PARTICLES = 1
 
 class Robot:
 	def __init__(self):
