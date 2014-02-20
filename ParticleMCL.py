@@ -29,7 +29,7 @@ class ParticleMCL(Particle):
 	def to_tuple(self):
 		return (self._x, self._y, self._theta, self._weight)
 
- calculate_m(self,	def wall):
+	def calculate_m(self,	wall):
 		Ax = wall[0]
 		Ay = wall[1]
 		Bx = wall[2]

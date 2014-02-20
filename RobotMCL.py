@@ -15,8 +15,8 @@ class RobotMCL(Robot):
 		BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
 		self._canvas = canvas
 
-	 def draw_particles(self):
-    self._canvas.drawParticles([p.to_tuple() for p in self._particles])
+	def draw_particles(self):
+		self._canvas.drawParticles([p.to_tuple() for p in self._particles])
 
 	def hittingTheWallIn(self):
 		return map(self.get_min_m_for_wall, self._particles)
