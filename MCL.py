@@ -1,7 +1,8 @@
 from RobotMCL import *
 from particleDataStructures import Map, Canvas
 
-wall_map = Map();
+canvas = Canvas()
+wall_map = Map(canvas)
 # Definitions of walls
 # a: O to A
 # b: A to B

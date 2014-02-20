@@ -48,8 +48,9 @@ class Canvas:
 
 # A Map class containing walls
 class Map:
-	def __init__(self):
+	def __init__(self, canvas):
 		self.walls = [];
+		self.canvas = canvas
 
 	def add_wall(self,wall):
 		self.walls.append(wall);
@@ -59,7 +60,7 @@ class Map:
 
 	def draw(self):
 		for wall in self.walls:
-			canvas.drawLine(wall);
+			self.canvas.drawLine(wall);
 
 	def get_walls(self):
 		return self.walls 
@@ -78,9 +79,9 @@ class Particles:
     def draw(self):
         canvas.drawParticles(self.data);
 
+'''
 canvas = Canvas();	# global canvas we are going to draw on
 
-'''
 mymap = Map();
 # Definitions of walls
 # a: O to A
