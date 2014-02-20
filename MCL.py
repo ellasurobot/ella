@@ -23,7 +23,7 @@ wall_map.add_wall((210,0,0,0));        # h
 wall_map.draw();
 
 
-robot = RobotMCL(wall_map, 84, 30)
+robot = RobotMCL(wall_map, 84, 30, canvas)
 #robot.navigateToWaypoint(0,10)
 #robot.navigateToWaypoint(10,10)
 #print robot.hittingTheWallIn()

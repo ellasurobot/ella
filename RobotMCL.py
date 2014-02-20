@@ -7,13 +7,16 @@ import sys
 
 class RobotMCL(Robot):
 		
-	def __init__(self, wall_map, x, y):
+	def __init__(self, wall_map, x, y, canvas):
 		Robot.__init__(self)
 		self._sonar = Sensor("PORT_4", "sonar")
 		self._map = wall_map.get_walls()
 		self._particles = [ParticleMCL(x, y, (1/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
+		self._canvas = canvas
 
+	 def draw_particles(self):
+    self._canvas.drawParticles([p.to_tuple() for p in self._particles])
 
 	def hittingTheWallIn(self):
 		return map(self.get_min_m_for_wall, self._particles)

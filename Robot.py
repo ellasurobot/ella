@@ -67,7 +67,7 @@ class Robot:
 			self.update_particles(rotations, movement)
 			temp += 1
 			last_rotation = curr_rotation
-			print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+			self.draw_particles()
 			if (time.time() - init_time > 0.2):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			curr_time = time.time()
@@ -75,10 +75,9 @@ class Robot:
 		self._motorA.set_speed(0)
 		self._motorB.set_speed(0)
 		BrickPiUpdateValues()
-
 		rotations = reference_motor.get_current_rotation() - last_rotation 
 		self.update_particles(rotations, movement)
-		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
+		self.draw_particles()
 		print("turned_total ", (reference_motor.get_current_rotation() - initial_rotation)/ROTATIONS_PER_DEGREE)
 		print("turned_degrees last", reference_motor.get_current_rotation() - initial_rotation)
 		curr_time = time.time()
@@ -90,7 +89,9 @@ class Robot:
 #				print("turned_degrees B: ", count, ": ",  other_motor.get_current_rotation() - initial_rotation_other)
 #				curr_time = time.time() 
 #				count += 1
-
+	
+	def draw_particles(self):
+		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
 
 	def update_particles(self, rotations, movement):
 		if movement == "forward" or movement == "backward":

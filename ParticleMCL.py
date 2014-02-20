@@ -25,7 +25,11 @@ class ParticleMCL(Particle):
 	def get_m(self):
 		return sorted(map(self.calculate_m, self._wall_map))
 
-	def calculate_m(self, wall):
+	
+	def to_tuple(self):
+		return (self._x, self._y, self._theta, self._weight)
+
+ calculate_m(self,	def wall):
 		Ax = wall[0]
 		Ay = wall[1]
 		Bx = wall[2]

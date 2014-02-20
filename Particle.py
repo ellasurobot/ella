@@ -37,6 +37,7 @@ class Particle:
 	def draw(self):
 		return (self._x*ZOOM_FACTOR + ORIGIN_X, -self._y*ZOOM_FACTOR + ORIGIN_Y, self._theta)
 
+
 	def get_random(self, n):
 		return random.gauss(0, n)
 
