@@ -5,6 +5,7 @@ import math
 import sys
 import random
 
+
 class RobotMCL(Robot):
 		
 	def __init__(self, wall_map, x, y, canvas):
