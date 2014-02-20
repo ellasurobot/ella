@@ -80,6 +80,7 @@ class Particles:
 
 canvas = Canvas();	# global canvas we are going to draw on
 
+'''
 mymap = Map();
 # Definitions of walls
 # a: O to A
@@ -101,7 +102,6 @@ mymap.add_wall((210,0,0,0));        # h
 mymap.draw();
 
 #particles = Particles();
-'''
 t = 0;
 while True:
     particles.update();

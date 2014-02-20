@@ -16,6 +16,8 @@ class ParticleMCL(Particle):
 		self._y = y
 		self._wall_map = wall_map	
 
+	def draw(self):
+		return (self._x, self._y, self._theta)
 
 	def calculate_likelihood(x, y, theta, z):
 		pass

@@ -19,10 +19,10 @@ wall_map.add_wall((168,210,168,84));   # e
 wall_map.add_wall((168,84,210,84));    # f
 wall_map.add_wall((210,84,210,0));     # g
 wall_map.add_wall((210,0,0,0));        # h
-#mymap.draw();
+wall_map.draw();
 
 
-robot = RobotMCL(wall_map, int(sys.argv[1]), int(sys.argv[2]))
-robot.navigateToWaypoint(0,10)
+robot = RobotMCL(wall_map, 84, 30)
+#robot.navigateToWaypoint(0,10)
 #robot.navigateToWaypoint(10,10)
-print robot.hittingTheWallIn()
+#print robot.hittingTheWallIn()
