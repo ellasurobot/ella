@@ -78,17 +78,10 @@ class Robot:
 		rotations = reference_motor.get_current_rotation() - last_rotation 
 		self.update_particles(rotations, movement)
 		self.draw_particles()
-		print("turned_total ", (reference_motor.get_current_rotation() - initial_rotation)/ROTATIONS_PER_DEGREE)
-		print("turned_degrees last", reference_motor.get_current_rotation() - initial_rotation)
+		#print("turned_total ", (reference_motor.get_current_rotation() - initial_rotation)/ROTATIONS_PER_DEGREE)
+		#print("turned_degrees last", reference_motor.get_current_rotation() - initial_rotation)
 		curr_time = time.time()
 		count = 0
-#		while(count < 10):
-#			if(time.time() - curr_time > 0.1):
-#				BrickPiUpdateValues()
-#				print("turned_degrees A: ", count, ": ",  reference_motor.get_current_rotation() - initial_rotation)
-#				print("turned_degrees B: ", count, ": ",  other_motor.get_current_rotation() - initial_rotation_other)
-#				curr_time = time.time() 
-#				count += 1
 	
 	def draw_particles(self):
 		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
