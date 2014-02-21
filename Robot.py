@@ -7,6 +7,7 @@ import math
 from operator import attrgetter
 
 NUMBER_OF_PARTICLES = 100 
+CYCLE_LENGTH = 20
 
 class Robot:
 	def __init__(self):
@@ -83,6 +84,9 @@ class Robot:
 		curr_time = time.time()
 		count = 0
 	
+	def resample_particles(self):
+		pass
+
 	def draw_particles(self):
 		print "drawParticles:" + str(map(self.particle_to_tuple, self._particles))
 

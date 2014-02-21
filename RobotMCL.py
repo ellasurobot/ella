@@ -40,8 +40,8 @@ class RobotMCL(Robot):
 
 	def get_actual_sonar_value(self):
 		readings = []
-		for i in range (1, 10)
-			readings[i] = self._sonar.get_value()
+		for i in range (1, 10):
+			readings.append(self._sonar.get_value())
 		mode = Counter(readings).most_common(1)[0][0]
 		print ("sonar readings" , readings)
 		return mode + SONAR_DIFFERENCE
@@ -57,21 +57,19 @@ class RobotMCL(Robot):
 			new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), new_p.get_theta(), (1.0/NUMBER_OF_PARTICLES), self._map))
 		self._particles = new_particles
 
- 	def navigateToWaypoint(self, x, y):
+ 	def navigateToWaypoint(self, theta, distance):
 		BrickPiUpdateValues()
-		initial_rotation = self._motorA.get_current_rotation()
+		self.turn(theta)
+		time.sleep(0.5)
+		self.forward(distance)
+		self.resample_particles()
+
+	def navigate_to_way_point_a_bit(self, x, y):
  		(x_curr, y_curr, theta_curr) = self.get_current_position()
  		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
-		print("theta: ", theta)
-		self.turn(theta)
-		time.sleep(1)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
-		self.forward(distance)
-		time.sleep(1)
- 		(x_curr, y_curr, theta_curr) = self.get_current_position()
-		print("theta's: ", [p.get_theta() for p in self._particles])
-		print ("x_curr: ", x_curr, "y_curr: ", y_curr, "theta_curr: ", theta_curr)
-		self.resample_particles()
-		time.sleep(1)	
- 		(x_curr, y_curr, theta_curr) = self.get_current_position()
-		print ("x_curr: ", x_curr, "y_curr: ", y_curr, "theta_curr: ", theta_curr)
+		new_distance = min(distance, CYCLE_LENGTH)	
+		self.navigateToWaypoint(theta, new_distance)
+		if(new_distance == CYCLE_LENGTH):
+			self.navigate_to_way_point_a_bit(x, y)
+			
