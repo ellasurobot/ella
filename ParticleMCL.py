@@ -7,10 +7,11 @@ VARIANCE = 3
 
 class ParticleMCL(Particle):
 
-	def __init__(self, x, y, weight, wall_map):
+	def __init__(self, x, y, theta, weight, wall_map):
 		Particle.__init__(self, weight)
 		self._x = x
 		self._y = y
+		self._theta = theta
 		self._wall_map = wall_map	
 
 	def draw(self):
@@ -18,7 +19,6 @@ class ParticleMCL(Particle):
 
 	def calculate_likelihood(self, sensor_distance):
 		m = self.calc_min_distance_to_wall()
-		print m
 		z = sensor_distance	
 		return math.exp(-math.pow((z - m),2)/(2*VARIANCE))
 

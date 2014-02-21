@@ -6,7 +6,7 @@ from Particle import*
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 100
+NUMBER_OF_PARTICLES = 1
 
 class Robot:
 	def __init__(self):
@@ -45,7 +45,7 @@ class Robot:
 		increase = 1
 		if (degrees < 0):
 			increase = 1.5 
-		self._motorB.set_speed(-1 * index * TURN_SPEED*increase)
+		self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
 		self._motorA.set_speed(index * TURN_SPEED)
 		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
 
@@ -132,7 +132,9 @@ class Robot:
 	
 	def get_degrees_to_turn(self, x_curr, y_curr, theta_curr, x, y):
 		theta_origin = math.degrees(math.atan2(y - y_curr, x - x_curr))
+		print("theta_origin", theta_origin, "theta_curr", theta_curr)
 		theta = (theta_origin - theta_curr) % 360
+		print("theta without magic", theta)
 		if(theta > 180):
 			theta = theta - 360
 		else:
