@@ -1,3 +1,4 @@
+from collections import Counter
 from Robot import *
 from ParticleMCL import *
 from Sensor import *
@@ -5,6 +6,7 @@ import math
 import sys
 import random
 
+SONAR_DIFFERENCE = 5
 
 class RobotMCL(Robot):
 		
@@ -36,10 +38,19 @@ class RobotMCL(Robot):
 			if (temp_weight >= sample):
 				return p
 
+	def get_actual_sonar_value(self):
+		readings = []
+		for i in range (1, 10)
+			readings[i] = self._sonar.get_value()
+		mode = Counter(readings).most_common(1)[0][0]
+		print ("sonar readings" , readings)
+		return mode + SONAR_DIFFERENCE
+
 	def resample_particles(self):
 		total_weight = 0
+		sonar_reading = self.get_actual_sonar_value()
 		for p in self._particles:
-			total_weight += p.update_weight(self._sonar.get_value())	
+			total_weight += p.update_weight(sonar_reading)	
 		new_particles = []
 		for p in self._particles:
 			new_p = self.sample_particle(total_weight)
@@ -57,6 +68,10 @@ class RobotMCL(Robot):
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
 		self.forward(distance)
 		time.sleep(1)
+ 		(x_curr, y_curr, theta_curr) = self.get_current_position()
+		print("theta's: ", [p.get_theta() for p in self._particles])
+		print ("x_curr: ", x_curr, "y_curr: ", y_curr, "theta_curr: ", theta_curr)
 		self.resample_particles()
-		time.sleep(1)
-			
+		time.sleep(1)	
+ 		(x_curr, y_curr, theta_curr) = self.get_current_position()
+		print ("x_curr: ", x_curr, "y_curr: ", y_curr, "theta_curr: ", theta_curr)

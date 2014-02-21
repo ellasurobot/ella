@@ -24,7 +24,6 @@ wall_map.draw();
 
 
 robot = RobotMCL(wall_map, 84, 30, canvas)
-#robot = RobotMCL(wall_map, 180, 54, canvas)
 robot.navigateToWaypoint(180, 30)
 robot.navigateToWaypoint(180, 54)
 robot.navigateToWaypoint(126, 54)

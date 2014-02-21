@@ -6,7 +6,7 @@ from Particle import*
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 1
+NUMBER_OF_PARTICLES = 100 
 
 class Robot:
 	def __init__(self):
@@ -44,7 +44,7 @@ class Robot:
 		index = self.direction(degrees)
 		increase = 1
 		if (degrees < 0):
-			increase = 1.5 
+			increase = 1.2
 		self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
 		self._motorA.set_speed(index * TURN_SPEED)
 		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
@@ -105,22 +105,41 @@ class Robot:
 	def particle_to_tuple(self, particle):
 		return particle.draw()
 
+	def is_orientated_to_left(self):
+		left = 0
+		for p in self._particles:
+			if (p.get_theta() > 90 and p.get_theta() < 270):
+				left += 1
+		return (left > (len(self._particles) / 2))
+
 	def get_current_position(self):
 		x_mean = 0
 		y_mean = 0
 		theta_mean = 0
+		is_left = self.is_orientated_to_left()
 		for p in self._particles:
 			x_mean += p.get_x() * p.get_weight()
 			y_mean += p.get_y() * p.get_weight()
-			theta_mean += p.get_theta() * p.get_weight()
+			theta = p.get_theta()
+			if(not(is_left)):
+				theta = self.change_range(theta)
+			theta_mean += theta * p.get_weight()
 		return (x_mean, y_mean, theta_mean)
+
+	# domain: 0 < theta < 360
+	# output: -180 < theta < 180
+	def change_range(self, theta):
+		theta %= 360
+		if(theta > 180):
+			theta -= 360
+		return theta
 
 	def navigateToWaypoint(self, x, y):
 		BrickPiUpdateValues()
 		initial_rotation = self._motorA.get_current_rotation()
 		(x_curr, y_curr, theta_curr) = self.get_current_position()
 		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
-		print("theta!: ", theta)
+#		print("theta!: ", theta)
 		self.turn(theta)
 		time.sleep(1)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
@@ -132,9 +151,9 @@ class Robot:
 	
 	def get_degrees_to_turn(self, x_curr, y_curr, theta_curr, x, y):
 		theta_origin = math.degrees(math.atan2(y - y_curr, x - x_curr))
-		print("theta_origin", theta_origin, "theta_curr", theta_curr)
+#		print("theta_origin", theta_origin, "theta_curr", theta_curr)
 		theta = (theta_origin - theta_curr) % 360
-		print("theta without magic", theta)
+#		print("theta without magic", theta)
 		if(theta > 180):
 			theta = theta - 360
 		else:
