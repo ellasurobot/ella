@@ -12,7 +12,7 @@ class RobotMCL(Robot):
 		Robot.__init__(self)
 		self._sonar = Sensor("PORT_4", "sonar")
 		self._map = wall_map.get_walls()
-		self._particles = [ParticleMCL(x, y, (1/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
+		self._particles = [ParticleMCL(x, y, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
 		self._canvas = canvas
 
@@ -43,7 +43,7 @@ class RobotMCL(Robot):
 		new_particles = []
 		for p in self._particles:
 			new_p = self.sample_particle(total_weight)
-			new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), (1/NUMBER_OF_PARTICLES), self._map))
+			new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), (1.0/NUMBER_OF_PARTICLES), self._map))
 		self._particles = new_particles
 
  	def navigateToWaypoint(self, x, y):

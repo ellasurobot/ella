@@ -18,6 +18,7 @@ class ParticleMCL(Particle):
 
 	def calculate_likelihood(self, sensor_distance):
 		m = self.calc_min_distance_to_wall()
+		print m
 		z = sensor_distance	
 		return math.exp(-math.pow((z - m),2)/(2*VARIANCE))
 
@@ -31,6 +32,7 @@ class ParticleMCL(Particle):
 		for m in ms:
 			if self.in_wall_of(m):
 				return m
+		return sys.maxint
 
 	def calc_distances_to_walls(self):
 		return sorted(map(self.calculate_m, self._wall_map))
