@@ -24,6 +24,11 @@ wall_map.draw();
 
 
 robot = RobotMCL(wall_map, 84, 30, canvas)
-robot.navigateToWaypoint(200, 30)
-robot.navigateToWaypoint(10,10)
-#print robot.hittingTheWallIn()
+robot.navigateToWaypoint(180, 30)
+robot.navigateToWaypoint(180, 54)
+robot.navigateToWaypoint(126, 54)
+robot.navigateToWaypoint(126, 168)
+robot.navigateToWaypoint(126, 126)
+robot.navigateToWaypoint(30, 54)
+robot.navigateToWaypoint(84, 54)
+robot.navigateToWaypoint(84, 30)
