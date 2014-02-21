@@ -32,3 +32,4 @@ robot.navigate_to_way_point_a_bit(126, 126)
 robot.navigate_to_way_point_a_bit(30, 54)
 robot.navigate_to_way_point_a_bit(84, 54)
 robot.navigate_to_way_point_a_bit(84, 30)
+

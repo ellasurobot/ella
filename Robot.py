@@ -6,7 +6,7 @@ from Particle import*
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 100 
+NUMBER_OF_PARTICLES = 100
 CYCLE_LENGTH = 20
 
 class Robot:
@@ -42,13 +42,16 @@ class Robot:
 			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 20, "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
-		index = self.direction(degrees)
-		increase = 1
-		if (degrees < 0):
-			increase = 1.2
-		self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
-		self._motorA.set_speed(index * TURN_SPEED)
-		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
+		if(degrees == 0):
+			return
+		else:
+			index = self.direction(degrees)
+			increase = 1
+			if (degrees < 0):
+				increase = 1.3
+			self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
+			self._motorA.set_speed(index * TURN_SPEED)
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
 		self.error = 0

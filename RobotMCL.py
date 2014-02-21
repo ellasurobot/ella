@@ -43,7 +43,7 @@ class RobotMCL(Robot):
 		for i in range (1, 10):
 			readings.append(self._sonar.get_value())
 		mode = Counter(readings).most_common(1)[0][0]
-		print ("sonar readings" , readings)
+#		print ("sonar readings" , readings)
 		return mode + SONAR_DIFFERENCE
 
 	def resample_particles(self):
@@ -59,17 +59,31 @@ class RobotMCL(Robot):
 
  	def navigateToWaypoint(self, theta, distance):
 		BrickPiUpdateValues()
+#		print("turningn : " , theta)
 		self.turn(theta)
 		time.sleep(0.5)
 		self.forward(distance)
+#		print("------")
+		self.print_stuff()
 		self.resample_particles()
+		self.print_stuff()
+#		print("------")
+
+	def print_stuff(self):
+		(x_curr, y_curr, theta_curr) = self.get_current_position()
+#		print("X_CURR: ", x_curr, "y_curr: ", y_curr, "theta: ", theta_curr)
+#		print([(p.get_x(), p.get_y(), p.get_theta(), p.get_weight()) for p in self._particles])
 
 	def navigate_to_way_point_a_bit(self, x, y):
  		(x_curr, y_curr, theta_curr) = self.get_current_position()
  		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
+		print("curr", x_curr, y_curr, theta_curr)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
-		new_distance = min(distance, CYCLE_LENGTH)	
+		new_distance = min(distance, CYCLE_LENGTH)
+		print("Moving distance: ", new_distance, "Rotating degrees", theta)	
 		self.navigateToWaypoint(theta, new_distance)
 		if(new_distance == CYCLE_LENGTH):
 			self.navigate_to_way_point_a_bit(x, y)
+		else:
+			print("NEW POINT")
 			
