@@ -6,7 +6,7 @@ import sys
 ADJUSTED_DISTANCE = 0
 VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.2
 VAR_TURN_FOR_FORWARD_PER_CM = 0.1
-VAR_TURN_FOR_TURN_PER_CM = 0.05
+VAR_TURN_FOR_TURN_PER_CM = 0.01
 
 class Particle:
 
@@ -27,13 +27,13 @@ class Particle:
 		self.set_theta(self._theta + f)	
 
 	def set_theta(self, theta):
-		theta %= 360
-		if(theta > 180):
-			theta -= 360
+#		theta %= 360
+#		if(theta > 180):
+#			theta -= 360
 	 	self._theta = theta	
 
 	def update_rotation(self, theta_change):
-		print("update rotation", theta_change)
+		#print("update rotation", theta_change)
 #		g = 0
 		var_turn = VAR_TURN_FOR_TURN_PER_CM*math.pow(theta_change,2)
 		g = self.get_random(var_turn)

@@ -122,15 +122,22 @@ class Robot:
 	def get_current_position(self):
 		x_mean = 0
 		y_mean = 0
+		x_unit_vectors = 0
+		y_unit_vectors = 0
 		theta_mean = 0
-		is_left = self.is_orientated_to_left()
+#		is_left = self.is_orientated_to_left()
 		for p in self._particles:
 			x_mean += p.get_x() * p.get_weight()
 			y_mean += p.get_y() * p.get_weight()
 			theta = p.get_theta()
-			if(not(is_left)):
-				theta = self.change_range(theta)
-			theta_mean += theta * p.get_weight()
+#			if(not(is_left)):
+#				theta = self.change_range(theta)
+#			theta_mean += theta * p.get_weight()
+			x_unit_vectors += math.cos(math.radians(theta))*p.get_weight()
+			y_unit_vectors += math.sin(math.radians(theta))*p.get_weight()
+#			print ("theta: ", theta)
+		theta_mean = math.degrees(math.atan2(y_unit_vectors, x_unit_vectors))
+#		print ("theta_mean: ", theta_mean)
 		return (x_mean, y_mean, theta_mean)
 
 	# domain: 0 < theta < 360

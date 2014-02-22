@@ -3,7 +3,8 @@ import random
 from Particle import *
 import sys
 
-VARIANCE = 3
+VARIANCE = 2
+K = 0.1
 
 class ParticleMCL(Particle):
 
@@ -20,10 +21,15 @@ class ParticleMCL(Particle):
 	def calculate_likelihood(self, sensor_distance):
 		m = self.calc_min_distance_to_wall()
 		z = sensor_distance	
-		return math.exp(-math.pow((z - m),2)/(2*VARIANCE))
+#		print ("m :", m, "z: ", z)
+		return math.exp(-math.pow((z - m),2)/(2*VARIANCE)) + K
 
 	def update_weight(self, sensor_distance):
-		self._weight *= self.calculate_likelihood(sensor_distance)
+		#print ("weight of particle before: ", self._weight)
+		likelihood = self.calculate_likelihood(sensor_distance)
+		#print ("likelyyyy hood: ", likelihood)
+		self._weight *=	likelihood
+#		print ("weight of particle after: ", self._weight)
 		return self._weight
 
 	# don't we need to check we are in the wall?
@@ -51,6 +57,7 @@ class ParticleMCL(Particle):
 		if (bottom == 0) or (top/bottom) < 0:
 			return sys.maxint
 		else:
+		#	print ("top: ", top, "bottom: ", bottom)
 			return top / bottom    
 
 	def in_wall_of(self, m):
