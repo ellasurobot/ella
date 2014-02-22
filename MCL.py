@@ -22,14 +22,18 @@ wall_map.add_wall((210,84,210,0));     # g
 wall_map.add_wall((210,0,0,0));        # h
 wall_map.draw();
 
-
 robot = RobotMCL(wall_map, 84, 30, canvas)
 robot.navigate_to_way_point_a_bit(180, 30)
 robot.navigate_to_way_point_a_bit(180, 54)
 robot.navigate_to_way_point_a_bit(126, 54)
+
+
 robot.navigate_to_way_point_a_bit(126, 168)
+
 robot.navigate_to_way_point_a_bit(126, 126)
 robot.navigate_to_way_point_a_bit(30, 54)
+
+
 robot.navigate_to_way_point_a_bit(84, 54)
 robot.navigate_to_way_point_a_bit(84, 30)
 

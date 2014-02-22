@@ -42,10 +42,7 @@ class RobotMCL(Robot):
 		readings = []
 		while(len(readings) <= 10):
 			value = self._sonar.get_value()
-			if (value < 255):
-				readings.append(value)
-			else:
-				self.forward(3)
+			readings.append(value)
 		mode = Counter(readings).most_common(1)[0][0]
 		print("mode sonar value: ", mode)
 		return mode + SONAR_DIFFERENCE
@@ -53,20 +50,19 @@ class RobotMCL(Robot):
 	def resample_particles(self):
 		total_weight = 0
 		sonar_reading = self.get_actual_sonar_value()
-		for p in self._particles:
-			total_weight += p.update_weight(sonar_reading)	
-		new_particles = []
-		for p in self._particles:
-			new_p = self.sample_particle(total_weight)
-			new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), new_p.get_theta(), (1.0/NUMBER_OF_PARTICLES), self._map))
-		self._particles = new_particles
+		if sonar_reading < 255:
+			for p in self._particles:
+				total_weight += p.update_weight(sonar_reading)	
+			new_particles = []
+			for p in self._particles:
+				new_p = self.sample_particle(total_weight)
+				new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), new_p.get_theta(), (1.0/NUMBER_OF_PARTICLES), self._map))
+			self._particles = new_particles
 
  	def navigateToWaypoint(self, theta, distance):
 		BrickPiUpdateValues()
 #		print("turningn : " , theta)
-		self.print_stuff()
 		self.turn(theta)
-		self.print_stuff()
 		time.sleep(0.1)
 		self.forward(distance)
 #		print("------")
