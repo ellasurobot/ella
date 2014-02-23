@@ -56,7 +56,9 @@ class RobotMCL(Robot):
 		time.sleep(0.1)
 		self.forward(distance)
 		self.print_stuff()
-		if (self.angle.to_wall() < 10):
+		angle = self.angle_to_wall()
+		print("angle: ", angle)
+		if (angle < 10):
 			self.resample_particles()
 		self.print_stuff()
 
@@ -77,9 +79,9 @@ class RobotMCL(Robot):
 		else:
 			print("NEW POINT")
 			
-	def angle_to_the_wall(self):
+	def angle_to_wall(self):
 		(x_curr, y_curr, theta_curr) = self.get_current_position()
-		(Ax, Ay, Bx, By) = self.get_current_wall()[1]
+		(Ax, Ay, Bx, By) = self.get_current_wall()
 		top = math.cos(math.radians(theta_curr)) * (Ay - By) + math.sin(math.radians(theta_curr)) * (Bx - Ax)
 		bottom = math.sqrt(math.pow(Ay - By, 2) + math.pow(Bx - Ax, 2))
 		return math.degrees(math.acos(top / bottom))
@@ -87,3 +89,6 @@ class RobotMCL(Robot):
 	def get_current_wall(self):
 		wall_list = map(self.find_wall, self._particles)
 		return Counter(wall_list).most_common(1)[0][0]
+	
+	def find_wall(self, particle):
+		return particle.calc_min_distance_to_wall()[1]

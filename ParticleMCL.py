@@ -3,7 +3,7 @@ import random
 from Particle import *
 import sys
 
-VARIANCE = 2
+VARIANCE = 3 
 K = 0.1
 
 class ParticleMCL(Particle):
