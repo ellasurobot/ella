@@ -21,15 +21,6 @@ class RobotMCL(Robot):
 	def draw_particles(self):
 		self._canvas.drawParticles([p.to_tuple() for p in self._particles])
 
-	def hittingTheWallIn(self):
-		return map(self.get_min_m_for_wall, self._particles)
-
-	def get_min_m_for_wall(self, particle):
-		for m in particle.get_m():
-			if self.in_wall_of(particle, m):
-				return m
-		return null
-
 	def sample_particle(self, total_weight):
 		sample = random.uniform(0,total_weight)
 		temp_weight = 0
@@ -61,20 +52,17 @@ class RobotMCL(Robot):
 
  	def navigateToWaypoint(self, theta, distance):
 		BrickPiUpdateValues()
-#		print("turningn : " , theta)
 		self.turn(theta)
 		time.sleep(0.1)
 		self.forward(distance)
-#		print("------")
 		self.print_stuff()
-		self.resample_particles()
+		if (self.angle.to_wall() < 10):
+			self.resample_particles()
 		self.print_stuff()
-#		print("------")
 
 	def print_stuff(self):
 		(x_curr, y_curr, theta_curr) = self.get_current_position()
 		print("X_CURR: ", x_curr, "y_curr: ", y_curr, "theta: ", theta_curr)
-#		print([(p.get_x(), p.get_y(), p.get_theta(), p.get_weight()) for p in self._particles])
 
 	def navigate_to_way_point_a_bit(self, x, y):
  		(x_curr, y_curr, theta_curr) = self.get_current_position()
@@ -89,3 +77,13 @@ class RobotMCL(Robot):
 		else:
 			print("NEW POINT")
 			
+	def angle_to_the_wall(self):
+		(x_curr, y_curr, theta_curr) = self.get_current_position()
+		(Ax, Ay, Bx, By) = self.get_current_wall()[1]
+		top = math.cos(math.radians(theta_curr)) * (Ay - By) + math.sin(math.radians(theta_curr)) * (Bx - Ax)
+		bottom = math.sqrt(math.pow(Ay - By, 2) + math.pow(Bx - Ax, 2))
+		return math.degrees(math.acos(top / bottom))
+
+	def get_current_wall(self):
+		wall_list = map(self.find_wall, self._particles)
+		return Counter(wall_list).most_common(1)[0][0]
