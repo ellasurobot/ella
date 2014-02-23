@@ -28,7 +28,6 @@ class ParticleMCL(Particle):
 		self._weight *=	likelihood
 		return self._weight
 
-	# don't we need to check we are in the wall?
 	def calc_min_distance_to_wall(self):
 		ms = self.calc_distances_to_walls()
 		for (m, wall) in ms:

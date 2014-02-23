@@ -33,7 +33,10 @@ class RobotMCL(Robot):
 		readings = []
 		while(len(readings) <= 10):
 			value = self._sonar.get_value()
-			readings.append(value)
+			if value < 255:
+				readings.append(value)
+			else:
+				self.forward(1)
 		mode = Counter(readings).most_common(1)[0][0]
 		print("mode sonar value: ", mode)
 		return mode + SONAR_DIFFERENCE
@@ -58,7 +61,7 @@ class RobotMCL(Robot):
 		self.print_stuff()
 		angle = self.angle_to_wall()
 		print("angle: ", angle)
-		if (angle < 10):
+		if (angle < 20):
 			self.resample_particles()
 		self.print_stuff()
 
@@ -69,7 +72,6 @@ class RobotMCL(Robot):
 	def navigate_to_way_point_a_bit(self, x, y):
  		(x_curr, y_curr, theta_curr) = self.get_current_position()
  		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
-#		print("curr", x_curr, y_curr, theta_curr)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
 		new_distance = min(distance, CYCLE_LENGTH)
 		print("Moving distance: ", new_distance, "Rotating degrees", theta)	
