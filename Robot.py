@@ -6,7 +6,7 @@ from Particle import*
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 100
+NUMBER_OF_PARTICLES = 5
 CYCLE_LENGTH = 15
 
 class Robot:
@@ -135,8 +135,9 @@ class Robot:
 #			theta_mean += theta * p.get_weight()
 			x_unit_vectors += math.cos(math.radians(theta))*p.get_weight()
 			y_unit_vectors += math.sin(math.radians(theta))*p.get_weight()
-#			print ("theta: ", theta)
+			print ("theta: ", theta)
 		theta_mean = math.degrees(math.atan2(y_unit_vectors, x_unit_vectors))
+		print("x_mean", x_mean, "y_mean", y_mean, "theta_mean", theta_mean)
 #		print ("theta_mean: ", theta_mean)
 		return (x_mean, y_mean, theta_mean)
 

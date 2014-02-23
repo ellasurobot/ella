@@ -35,8 +35,6 @@ class RobotMCL(Robot):
 			value = self._sonar.get_value()
 			if value < 255:
 				readings.append(value)
-			else:
-				self.forward(1)
 		mode = Counter(readings).most_common(1)[0][0]
 		print("mode sonar value: ", mode)
 		return mode + SONAR_DIFFERENCE
@@ -61,7 +59,7 @@ class RobotMCL(Robot):
 		self.print_stuff()
 		angle = self.angle_to_wall()
 		print("angle: ", angle)
-		if (angle < 20):
+		if (angle < 15):
 			self.resample_particles()
 		self.print_stuff()
 
