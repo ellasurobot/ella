@@ -72,6 +72,7 @@ class RobotMCL(Robot):
 		if (angle < 15):
 			self.resample_particles()
 		else:
+			print ("BIG ANGLE")
 			self._not_sampling += 1
 			resampled = False
 		self.print_stuff()

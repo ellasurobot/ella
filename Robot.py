@@ -37,9 +37,9 @@ class Robot:
 		self._motorA.set_speed(index * FORWARD_SPEED_A)
 		self._motorB.set_speed(index * FORWARD_SPEED_B)
 		if (distance > 0):
-			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 20, "forward")
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 10, "forward")
 		else:
-			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 20, "backward")
+			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 10, "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
 		if(degrees == 0):
@@ -48,7 +48,7 @@ class Robot:
 			index = self.direction(degrees)
 			increase = 1
 			if (degrees < 0):
-				increase = 1.2
+				increase = 1.3
 			self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
 			self._motorA.set_speed(index * TURN_SPEED)
 			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
