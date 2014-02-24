@@ -59,6 +59,8 @@ class RobotMCL(Robot):
 		self.print_stuff()
 		angle = self.angle_to_wall()
 		print("angle: ", angle)
+		resampled = True
+		'''
 		if self._not_sampling > 2:
 			self.turn(90 - angle)
 			self._not_sampling = 0
@@ -66,25 +68,36 @@ class RobotMCL(Robot):
 			time.sleep(0.5)
 			self.resample_particles()
 		angle = self.angle_to_wall()
+		'''
 		if (angle < 15):
 			self.resample_particles()
 		else:
 			self._not_sampling += 1
+			resampled = False
 		self.print_stuff()
+		return resampled
 
 	def print_stuff(self):
 		(x_curr, y_curr, theta_curr) = self.get_current_position()
 		print("X_CURR: ", x_curr, "y_curr: ", y_curr, "theta: ", theta_curr)
 
-	def navigate_to_way_point_a_bit(self, x, y):
- 		(x_curr, y_curr, theta_curr) = self.get_current_position()
+	def navigate_to_way_point_a_bit(self, x, y, old_pos=None):
+		if(not old_pos):
+ 			(x_curr, y_curr, theta_curr) = self.get_current_position()
+		else:
+			(x_curr, y_curr, theta_curr) = old_pos
+			print("old pos should be not none: ", old_pos)
  		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
+		print("x,y,theta: ", (x_curr, y_curr, theta_curr)	)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
 		new_distance = min(distance, CYCLE_LENGTH)
 		print("Moving distance: ", new_distance, "Rotating degrees", theta)	
-		self.navigateToWaypoint(theta, new_distance)
+		resampled = self.navigateToWaypoint(theta, new_distance)
 		if(new_distance == CYCLE_LENGTH):
-			self.navigate_to_way_point_a_bit(x, y)
+			old_pos = None
+			if(not resampled):
+				old_pos = (x_curr+new_distance*math.cos(math.radians(theta+theta_curr)), y_curr+new_distance*math.sin(math.radians(theta+theta_curr)), theta_curr + theta)
+			self.navigate_to_way_point_a_bit(x, y, old_pos)
 		else:
 			print("NEW POINT")
 			
