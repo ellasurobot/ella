@@ -15,7 +15,9 @@ robot = Robot()
 
 DISTANCE = int(sys.argv[1])		# move forward in cm
 draw_square(DISTANCE)
-#robot.forward(DISTANCE)
+robot.forward(DISTANCE)
+'''
 for i in range(7):
 	robot.forward(15)
 	time.sleep(0.5)
+'''

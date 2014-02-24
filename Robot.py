@@ -42,9 +42,10 @@ class Robot:
 			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 10, "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
-		if(degrees == 0):
+		if(abs(degrees) < 3):
 			return
 		else:
+			print("REALLY TURNING")
 			index = self.direction(degrees)
 			increase = 1
 			if (degrees < 0):

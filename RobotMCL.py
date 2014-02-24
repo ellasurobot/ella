@@ -40,6 +40,7 @@ class RobotMCL(Robot):
 		return mode + SONAR_DIFFERENCE
 
 	def resample_particles(self):
+		print("thetas ", [p.get_theta() for p in self._particles])
 		total_weight = 0
 		sonar_reading = self.get_actual_sonar_value()
 		if sonar_reading < 255:
@@ -91,10 +92,13 @@ class RobotMCL(Robot):
  		theta = self.get_degrees_to_turn(x_curr, y_curr, theta_curr, x, y)
 		print("x,y,theta: ", (x_curr, y_curr, theta_curr)	)
 		distance = self.get_distance_to_move(x_curr, y_curr, x, y)
-		new_distance = min(distance, CYCLE_LENGTH)
+		if distance - CYCLE_LENGTH <= 7:
+			new_distance = distance
+		else:
+			new_distance = CYCLE_LENGTH
 		print("Moving distance: ", new_distance, "Rotating degrees", theta)	
 		resampled = self.navigateToWaypoint(theta, new_distance)
-		if(new_distance == CYCLE_LENGTH):
+		if(distance - CYCLE_LENGTH > 7):
 			old_pos = None
 			if(not resampled):
 				old_pos = (x_curr+new_distance*math.cos(math.radians(theta+theta_curr)), y_curr+new_distance*math.sin(math.radians(theta+theta_curr)), theta_curr + theta)

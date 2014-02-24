@@ -26,6 +26,7 @@ print("point 1!")
 robot = RobotMCL(wall_map, 84, 30, canvas)
 print("point 2!")
 robot.navigate_to_way_point_a_bit(180, 30)
+
 print("point 3!")
 robot.navigate_to_way_point_a_bit(180, 54)
 print("point 4!")
