@@ -2,6 +2,8 @@ import math
 import random
 from DrawSquare import *
 import sys
+from Robot import *
+import globals
 
 ADJUSTED_DISTANCE = 0
 VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.150 # 0.15
@@ -21,7 +23,8 @@ class Particle:
 		var_turn = VAR_TURN_FOR_FORWARD_PER_CM*math.pow(distance_change,2)
 		e = self.get_random(var_distance)
 		f = self.get_random(var_turn)
-#		e = f =  -1
+		if(globals.BIG_ANGLE):
+			e = f = 0
 		self._x += (distance_change + e) * math.cos(math.radians(self._theta))
 		self._y += (distance_change + e) * math.sin(math.radians(self._theta))
 		self._theta += f
@@ -30,6 +33,8 @@ class Particle:
 #		g = 0
 		var_turn = VAR_TURN_FOR_TURN_PER_CM*math.pow(theta_change,2)
 		g = self.get_random(var_turn)
+		if(globals.BIG_ANGLE):
+			g = 0
 		self._theta += theta_change + g
 
 	def draw(self):

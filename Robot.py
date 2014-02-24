@@ -2,12 +2,14 @@ from Motor import *
 from MotorSettings import*
 from RobotSettings import *
 from BrickPi import *
-from Particle import*
+import globals
+from Particle import * 
 import math
 from operator import attrgetter
 
 NUMBER_OF_PARTICLES = 150
 CYCLE_LENGTH = 15
+
 
 class Robot:
 	def __init__(self):
@@ -16,7 +18,8 @@ class Robot:
 		self._motorA = Motor("PORT_A") 
 		self._motorB = Motor("PORT_B")
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
-		
+		globals.init()
+	
 	def forward_simple(self, distance):
 		index = self.direction(distance)
 		self._motorA.set_speed(FORWARD_SPEED_A*index)

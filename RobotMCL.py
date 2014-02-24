@@ -6,6 +6,7 @@ import math
 import sys
 import random
 
+
 SONAR_DIFFERENCE = 5 
 
 class RobotMCL(Robot):
@@ -60,6 +61,8 @@ class RobotMCL(Robot):
 			print ("reading is 255....")
 		print("thetas end ", [p.get_theta() for p in self._particles])
 
+	
+
  	def navigateToWaypoint(self, theta, distance):
 		BrickPiUpdateValues()
 		self.turn(theta)
@@ -80,8 +83,10 @@ class RobotMCL(Robot):
 		'''
 		if (angle < 15):
 			self.resample_particles()
+			globals.BIG_ANGLE = False
 		else:
-			print ("BIG ANGLE")
+			globals.BIG_ANGLE = True
+			self.resample_particles()
 			self._not_sampling += 1
 			resampled = False
 		self.print_stuff()
