@@ -58,6 +58,7 @@ class RobotMCL(Robot):
 				new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), new_p.get_theta(), (1.0/NUMBER_OF_PARTICLES), self._map))
 			self._particles = new_particles
 		else:
+			globals.BIG_ANGLE = True
 			print ("reading is 255....")
 		print("thetas end ", [p.get_theta() for p in self._particles])
 
@@ -82,8 +83,8 @@ class RobotMCL(Robot):
 		angle = self.angle_to_wall()
 		'''
 		if (angle < 15):
-			self.resample_particles()
 			globals.BIG_ANGLE = False
+			self.resample_particles()
 		else:
 			globals.BIG_ANGLE = True
 			self.resample_particles()

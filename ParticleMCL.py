@@ -4,7 +4,7 @@ from Particle import *
 import sys
 
 VARIANCE = 2 
-K = 0.05 # 0.1
+K = 0.1
 
 class ParticleMCL(Particle):
 

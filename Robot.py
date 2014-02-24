@@ -7,7 +7,7 @@ from Particle import *
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 150
+NUMBER_OF_PARTICLES = 200
 CYCLE_LENGTH = 15
 
 
@@ -76,7 +76,7 @@ class Robot:
 			temp += 1
 			last_rotation = curr_rotation
 			self.draw_particles()
-			if (time.time() - init_time > 0.2):
+			if (time.time() - init_time > 0.05):
 				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			curr_time = time.time()
 			BrickPiUpdateValues()
