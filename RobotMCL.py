@@ -114,7 +114,7 @@ class RobotMCL(Robot):
 		resampled = self.navigateToWaypoint(theta, new_distance)
 		if(distance - CYCLE_LENGTH > 7):
 			old_pos = None
-			if(not resampled):
+			if(not resampled or globals.BIG_ANGLE):
 				old_pos = (x_curr+new_distance*math.cos(math.radians(theta+theta_curr)), y_curr+new_distance*math.sin(math.radians(theta+theta_curr)), theta_curr + theta)
 			self.navigate_to_way_point_a_bit(x, y, old_pos)
 		else:

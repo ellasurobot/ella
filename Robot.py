@@ -52,7 +52,7 @@ class Robot:
 			index = self.direction(degrees)
 			increase = 1
 			if (degrees < 0):
-				increase = 1.2
+				increase = 1.3
 			self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
 			self._motorA.set_speed(index * TURN_SPEED)
 			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		

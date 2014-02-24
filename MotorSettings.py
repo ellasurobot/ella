@@ -1,7 +1,7 @@
 TIME_DIFF = 0.01
 
-K_p_f = 0.2
-K_i_f = 0.25
+K_p_f = 0
+K_i_f = 0
 K_d_f = 0
 
 
