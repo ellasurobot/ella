@@ -42,11 +42,13 @@ robot.navigate_to_way_point_a_bit(126, 168)
 print("point 6!")
 robot.navigate_to_way_point_a_bit(126, 126)
 #robot.navigate_to_way_point_a_bit(130, 126)
-globals.BIG_ANGLE = True
+#globals.BIG_ANGLE = True
+#globals.BAD = True
 print("point 7!")
+robot.navigate_to_way_point_a_bit(30, 69)
+globals.BAD = False
 robot.navigate_to_way_point_a_bit(30, 54)
 
-globals.BIG_ANGLE = False
 print("point 8!")
 robot.navigate_to_way_point_a_bit(84, 54)
 print("point 9!")

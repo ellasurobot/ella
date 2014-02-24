@@ -7,8 +7,8 @@ import globals
 
 ADJUSTED_DISTANCE = 0
 VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.030 # 0.15
-VAR_TURN_FOR_FORWARD_PER_CM = 0.02 # 0.01
-VAR_TURN_FOR_TURN_PER_CM = 0.01 # 0.01
+VAR_TURN_FOR_FORWARD_PER_CM = 0.01 # 0.02 # 0.01
+VAR_TURN_FOR_TURN_PER_CM = 0.005 # 0.01 # 0.01
 
 class Particle:
 
@@ -23,7 +23,7 @@ class Particle:
 		var_turn = VAR_TURN_FOR_FORWARD_PER_CM*math.pow(distance_change,2)
 		e = self.get_random(var_distance)
 		f = self.get_random(var_turn)
-		if(globals.BIG_ANGLE):
+		if(globals.BIG_ANGLE or globals.BAD):
 			e *= 0.5
 			f *= 0.5
 #			e = f = 0
@@ -35,7 +35,7 @@ class Particle:
 #		g = 0
 		var_turn = VAR_TURN_FOR_TURN_PER_CM*math.pow(theta_change,2)
 		g = self.get_random(var_turn)
-		if(globals.BIG_ANGLE):
+		if(globals.BIG_ANGLE or globals.BAD):
 #			g = 0
 			g *= 0.5
 		self._theta += theta_change + g

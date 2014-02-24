@@ -7,7 +7,7 @@ from Particle import *
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 200
+NUMBER_OF_PARTICLES = 150
 CYCLE_LENGTH = 15
 
 

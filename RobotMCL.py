@@ -33,7 +33,7 @@ class RobotMCL(Robot):
 
 	def get_actual_sonar_value(self):
 		readings = []
-		time.sleep(0.5)
+		time.sleep(0.2)
 		reading_time = time.time()
 		while(len(readings) <= 10 and time.time() - reading_time < 0.5):
 			value = self._sonar.get_value()
@@ -114,7 +114,7 @@ class RobotMCL(Robot):
 		resampled = self.navigateToWaypoint(theta, new_distance)
 		if(distance - CYCLE_LENGTH > 7):
 			old_pos = None
-			if(not resampled or globals.BIG_ANGLE):
+			if(not resampled or globals.BIG_ANGLE or globals.BAD):
 				old_pos = (x_curr+new_distance*math.cos(math.radians(theta+theta_curr)), y_curr+new_distance*math.sin(math.radians(theta+theta_curr)), theta_curr + theta)
 			self.navigate_to_way_point_a_bit(x, y, old_pos)
 		else:
