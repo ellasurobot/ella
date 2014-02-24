@@ -20,6 +20,8 @@ class Particle:
 
 	def update_distance(self, distance_change):	
 		var_distance = VAR_DISTANCE_FOR_FORWARD_PER_CM*math.pow(distance_change,2)
+		if(globals.VAR_BIG):
+			var_distance *= 2
 		var_turn = VAR_TURN_FOR_FORWARD_PER_CM*math.pow(distance_change,2)
 		e = self.get_random(var_distance)
 		f = self.get_random(var_turn)

@@ -45,8 +45,10 @@ robot.navigate_to_way_point_a_bit(126, 126)
 #globals.BIG_ANGLE = True
 #globals.BAD = True
 print("point 7!")
-robot.navigate_to_way_point_a_bit(30, 69)
+globals.VAR_BIG = True
+robot.navigate_to_way_point_a_bit(34, 65)
 globals.BAD = False
+globals.VAR_BIG = False
 robot.navigate_to_way_point_a_bit(30, 54)
 
 print("point 8!")
