@@ -6,7 +6,7 @@ import sys
 ADJUSTED_DISTANCE = 0
 VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.15
 VAR_TURN_FOR_FORWARD_PER_CM = 0.02
-VAR_TURN_FOR_TURN_PER_CM = 0.0025
+VAR_TURN_FOR_TURN_PER_CM = 0.001
 
 class Particle:
 
@@ -21,7 +21,7 @@ class Particle:
 		var_turn = VAR_TURN_FOR_FORWARD_PER_CM*math.pow(distance_change,2)
 		e = self.get_random(var_distance)
 		f = self.get_random(var_turn)
-#		e = f =  0
+#		e = f =  -1
 		self._x += (distance_change + e) * math.cos(math.radians(self._theta))
 		self._y += (distance_change + e) * math.sin(math.radians(self._theta))
 		self._theta += f

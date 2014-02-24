@@ -21,7 +21,7 @@ wall_map.add_wall((168,84,210,84));    # f
 wall_map.add_wall((210,84,210,0));     # g
 wall_map.add_wall((210,0,0,0));        # h
 wall_map.draw();
-
+'''
 print("point 1!")
 robot = RobotMCL(wall_map, 84, 30, canvas)
 print("point 2!")
@@ -33,7 +33,9 @@ robot.navigate_to_way_point_a_bit(126, 54)
 
 print("point 5!")
 robot.navigate_to_way_point_a_bit(126, 168)
+'''
 
+robot = RobotMCL(wall_map, 126, 168, canvas)
 print("point 6!")
 robot.navigate_to_way_point_a_bit(126, 126)
 print("point 7!")

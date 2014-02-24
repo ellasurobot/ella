@@ -6,7 +6,7 @@ import math
 import sys
 import random
 
-SONAR_DIFFERENCE = 5
+SONAR_DIFFERENCE = 7
 
 class RobotMCL(Robot):
 		
@@ -17,6 +17,7 @@ class RobotMCL(Robot):
 		self._particles = [ParticleMCL(x, y, 0, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		BrickPiSetupSensors()				#Send the properties of sensors to BrickPi
 		self._canvas = canvas
+		self._not_sampling = 0
 
 	def draw_particles(self):
 		self._canvas.drawParticles([p.to_tuple() for p in self._particles])
@@ -58,8 +59,17 @@ class RobotMCL(Robot):
 		self.print_stuff()
 		angle = self.angle_to_wall()
 		print("angle: ", angle)
-		if (angle < 10):
+		if self._not_sampling > 2:
+			self.turn(90 - angle)
+			self._not_sampling = 0
+			print ("turning.....")
+			time.sleep(0.5)
 			self.resample_particles()
+		angle = self.angle_to_wall()
+		if (angle < 15):
+			self.resample_particles()
+		else:
+			self._not_sampling += 1
 		self.print_stuff()
 
 	def print_stuff(self):
