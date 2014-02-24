@@ -35,7 +35,7 @@ robot.navigate_to_way_point_a_bit(126, 54)
 print("point 5!")
 robot.navigate_to_way_point_a_bit(126, 168)
 
-
+'''
 #robot = RobotMCL(wall_map, 126, 168, canvas)
 print("point 6!")
 robot.navigate_to_way_point_a_bit(126, 126)
@@ -46,5 +46,4 @@ print("point 8!")
 robot.navigate_to_way_point_a_bit(84, 54)
 print("point 9!")
 robot.navigate_to_way_point_a_bit(84, 30)
-
-
+'''

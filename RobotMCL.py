@@ -6,7 +6,7 @@ import math
 import sys
 import random
 
-SONAR_DIFFERENCE = 7
+SONAR_DIFFERENCE = 5 
 
 class RobotMCL(Robot):
 		
@@ -32,11 +32,16 @@ class RobotMCL(Robot):
 
 	def get_actual_sonar_value(self):
 		readings = []
-		while(len(readings) <= 20):
+		time.sleep(0.5)
+		reading_time = time.time()
+		while(len(readings) <= 10 and time.time() - reading_time < 0.5):
 			value = self._sonar.get_value()
-			readings.append(value)
+			if (value < 255):
+				readings.append(value)
+		readings.append(self._sonar.get_value())
 		mode = Counter(readings).most_common(1)[0][0]
 		print("mode sonar value: ", mode)
+		print("whole readings ", readings) 
 		return mode + SONAR_DIFFERENCE
 
 	def resample_particles(self):
@@ -51,6 +56,9 @@ class RobotMCL(Robot):
 				new_p = self.sample_particle(total_weight)
 				new_particles.append(ParticleMCL(new_p.get_x(), new_p.get_y(), new_p.get_theta(), (1.0/NUMBER_OF_PARTICLES), self._map))
 			self._particles = new_particles
+		else:
+			print ("reading is 255....")
+		print("thetas end ", [p.get_theta() for p in self._particles])
 
  	def navigateToWaypoint(self, theta, distance):
 		BrickPiUpdateValues()
