@@ -4,7 +4,8 @@ class Motor:
 	def __init__(self, port):
 		port_dictionary = {
 						"PORT_A":PORT_A,
-						"PORT_B":PORT_B
+						"PORT_B":PORT_B,
+						"PORT_C":PORT_C
 						}
 		port_number = port_dictionary[port]
 		self.__port = port_number
