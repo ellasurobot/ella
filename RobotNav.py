@@ -12,6 +12,9 @@ class RobotNav(Robot):
 		self._sonar = Sensor("PORT_2", "sonar")
 		BrickPiSetupSensors()	
 
+	def get_sonar_value(self):
+		return self._sonar.get_value()	
+
 
 	def turn_sonar(self, angle):
 		index = angle/abs(angle)

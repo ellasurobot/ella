@@ -19,7 +19,7 @@ class Robot:
 		self._motorB = Motor("PORT_B")
 		BrickPiSetupSensors()       #Send the properties of sensors to BrickPi
 		globals.init()
-	
+
 	def forward_simple(self, distance):
 		index = self.direction(distance)
 		self._motorA.set_speed(FORWARD_SPEED_A*index)
