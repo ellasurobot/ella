@@ -11,5 +11,5 @@ robot = RobotNav()
 
 centre = (400,400)
 
-robot.scan_and_plot()
-
+#robot.learn_location()
+print robot.compare_signatures(ls1,ls2)

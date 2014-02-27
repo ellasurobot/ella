@@ -52,9 +52,8 @@ class RobotNav(Robot):
 
 	# FILL IN: compare two signatures
 	def compare_signatures(self, ls1, ls2):
-			dist = 0
-			print "TODO:    You should implement the function that compares two signatures."
-			return dist
+			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(ls1,ls2)))
+			return sq_diff
 
 	# This function characterizes the current location, and stores the obtained 
 	# signature into the next available file.
