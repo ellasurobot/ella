@@ -26,15 +26,24 @@ class RobotNav(Robot):
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):
-			value = self._sonar.get_value()
-			print("sonar, val", value)
 			BrickPiUpdateValues()
+		self._motorSonar.set_speed(0)
+
+	def scan_and_plot(self):
+		for degree in range(360):
+#				self.turn_sonar(1)
+				BrickPiUpdateValues()
+				reading = self.get_sonar_value()
+				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
+				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
+				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
 	def characterize_location(self, ls):
 			for degree in range(len(ls.sig)):
-				self.turn_sonar(1)
+#				self.turn_sonar(1)
 	# reading = random.randint(0,255)
+				BrickPiUpdateValues()
 				reading = self.get_sonar_value()
 				ls.sig[degree] = reading
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
@@ -52,14 +61,14 @@ class RobotNav(Robot):
 	def learn_location(self):
 			ls = LocationSignature()
 			self.characterize_location(ls)
-			idx = signatures.get_free_index();
+			idx = self._signatures.get_free_index();
 			if (idx == -1): # run out of signature files
 					print "\nWARNING:"
 					print "No signature file is available. NOTHING NEW will be learned and stored."
 					print "Please remove some loc_%%.dat files.\n"
 					return
 			
-			signatures.save(ls,idx)
+			self._signatures.save(ls,idx)
 			print "STATUS:  Location " + str(idx) + " learned and saved."
 
 	# This function tries to recognize the current location.
@@ -75,9 +84,9 @@ class RobotNav(Robot):
 			self.characterize_location(ls_obs);
 
 			# FILL IN: COMPARE ls_read with ls_obs and find the best match
-			for idx in range(signatures.size):
+			for idx in range(self._signatures.size):
 					print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
-					ls_read = signatures.read(idx);
+					ls_read = self._signatures.read(idx);
 					dist    = self.compare_signatures(ls_obs, ls_read)
 
 

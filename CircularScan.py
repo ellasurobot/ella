@@ -11,6 +11,6 @@ robot = RobotNav()
 
 centre = (400,400)
 
-robot.learn_location()
+robot.scan_and_plot()
 	
 
