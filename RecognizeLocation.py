@@ -11,4 +11,4 @@ robot = RobotNav()
 
 centre = (400,400)
 
-robot.learn_specific_location(0)
+robot.recognize_location()

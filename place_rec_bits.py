@@ -73,7 +73,7 @@ class SignatureContainer():
                     ls.sig[i] = int(s)
             f.close();
         else:
-            print "WARNING: Signature does not exist."
+            print ("WARNING: Signature for location", index, " does not exist.")
         
         return ls
         

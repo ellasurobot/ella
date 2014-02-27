@@ -1,8 +1,9 @@
 from Robot import *
 from Sensor import *
 from place_rec_bits import *
+import sys
 
-MOTOR_SONAR_SPEED = 50
+MOTOR_SONAR_SPEED = 250
 ROTATION_PER_DEGREE_SONAR = 1
 CENTRE_SCREEN = (400,400)
 
@@ -52,7 +53,7 @@ class RobotNav(Robot):
 
 	# FILL IN: compare two signatures
 	def compare_signatures(self, ls1, ls2):
-			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(ls1,ls2)))
+			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(ls1.sig,ls2.sig)))
 			return sq_diff
 
 	def learn_specific_location(self, idx):
@@ -85,10 +86,15 @@ class RobotNav(Robot):
 			self.characterize_location(ls_obs);
 
 			# FILL IN: COMPARE ls_read with ls_obs and find the best match
+			index_best_fit = -1
+			min_sq_diff = sys.maxint
 			for idx in range(self._signatures.size):
 					print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
 					ls_read = self._signatures.read(idx);
-					dist    = self.compare_signatures(ls_obs, ls_read)
-
+					sq_diff    = self.compare_signatures(ls_obs, ls_read)
+					if sq_diff < min_sq_diff:	
+						min_sq_diff = sq_diff
+						index_best_fit = idx	
+			print("Best fit for location: ", idx, ", with sq_diff: ", min_sq_diff)
 
 
