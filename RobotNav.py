@@ -55,20 +55,22 @@ class RobotNav(Robot):
 			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(ls1,ls2)))
 			return sq_diff
 
-	# This function characterizes the current location, and stores the obtained 
-	# signature into the next available file.
+	def learn_specific_location(self, idx):
+		ls = LocationSignature()
+		self.characterize_location(ls)
+		self._signatures.save(ls,idx)
+		print "STATUS:  Location " + str(idx) + " learned and saved."
+
+	# Learns location i that is determined by the first loc_0i.dat that doesn't
+	# exist yet.
 	def learn_location(self):
-			ls = LocationSignature()
-			self.characterize_location(ls)
 			idx = self._signatures.get_free_index();
 			if (idx == -1): # run out of signature files
 					print "\nWARNING:"
 					print "No signature file is available. NOTHING NEW will be learned and stored."
 					print "Please remove some loc_%%.dat files.\n"
 					return
-			
-			self._signatures.save(ls,idx)
-			print "STATUS:  Location " + str(idx) + " learned and saved."
+			self.learn_specific_location(idx)	
 
 	# This function tries to recognize the current location.
 	# 1.   Characterize current location
