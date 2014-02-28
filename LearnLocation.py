@@ -13,4 +13,4 @@ centre = (400,400)
 
 
 
-robot.learn_specific_location(sys.argv[1])
+robot.learn_specific_location(int(sys.argv[1]))

@@ -3,8 +3,8 @@ from Sensor import *
 from place_rec_bits import *
 import sys
 
-MOTOR_SONAR_SPEED = 100
-ROTATION_PER_DEGREE_SONAR = 110.9
+MOTOR_SONAR_SPEED = 120 
+ROTATION_PER_DEGREE_SONAR = 1
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(Robot):
@@ -27,10 +27,9 @@ class RobotNav(Robot):
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):
+#			if(
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
-
-		print("rotated encoder degrees: ", initial_rotation - self._motorSonar.get_current_rotation())  
 
 	def scan_and_plot(self):
 		for degree in range(360):
@@ -43,19 +42,21 @@ class RobotNav(Robot):
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
 	def characterize_location(self, ls):
-			for degree in range(len(ls.sig)):
-#				self.turn_sonar(1)
-	# reading = random.randint(0,255)
-				BrickPiUpdateValues()
+		last_rotation = self._motorSonar.get_current_rotation()
+		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
+			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
 				reading = self.get_sonar_value()
 				ls.sig[degree] = reading
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+				last_rotation = self._motorSonar.get_current_rotation()
+			BrickPiUpdateValues()
+		self._motorSonar.set_speed(0)
 
 	# FILL IN: compare two signatures
-	def compare_signatures(self, ls1, ls2):
-			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(ls1.sig,ls2.sig)))
+	def sum_of_squares(self, list1, list2):
+			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(list1, list2)))
 			return sq_diff
 
 	def learn_specific_location(self, idx):
@@ -75,6 +76,16 @@ class RobotNav(Robot):
 					return
 			self.learn_specific_location(idx)	
 
+	def recognize_location(self):
+			obs_signature = HistogramSignature()
+			self.characterize_location(ls_obs)
+			saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
+			self.recognize_location_for_any_rotation(obs_signature, signatures)
+
+
+	def recognize_location_for_any_rotation(self):
+		pass
+
 	# This function tries to recognize the current location.
 	# 1.   Characterize current location
 	# 2.   For every learned locations
@@ -83,17 +94,16 @@ class RobotNav(Robot):
 	# 3.   Retain the learned location whose minimum distance with
 	#      actual characterization is the smallest.
 	# 4.   Display the index of the recognized location on the screen
-	def recognize_location(self):
+	def recognize_location(self, obs_sign, saved_signs):
 			ls_obs = LocationSignature();
 			self.characterize_location(ls_obs);
 
 			# FILL IN: COMPARE ls_read with ls_obs and find the best match
 			index_best_fit = -1
 			min_sq_diff = sys.maxint
-			for idx in range(self._signatures.size):
+			for sign in saved_signs:
 					print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
-					ls_read = self._signatures.read(idx);
-					sq_diff    = self.compare_signatures(ls_obs, ls_read)
+					sq_diff = self.sum_of_squares(obs_sign.get_data(), sign.get_data())
 					if sq_diff < min_sq_diff:	
 						min_sq_diff = sq_diff
 						index_best_fit = idx	

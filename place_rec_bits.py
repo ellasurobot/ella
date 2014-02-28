@@ -14,6 +14,17 @@ class LocationSignature:
         for i in range(len(self.sig)):
             print self.sig[i]
 
+		def get_data(self):
+			return self.sig
+
+class HistogramSignature(LocationSignature):
+		def __init__(self):
+			LocationSignature.__init__(self)
+			self._histogram = [0] * 255
+
+		def get_data(self):
+			return self.histogram 
+
 # --------------------- File management class ---------------
 class SignatureContainer():
     def __init__(self, size = 5):
