@@ -25,6 +25,12 @@ class HistogramSignature(LocationSignature):
     def get_data(self):
 	return self._histogram 
 
+    def calculate_histogram(self):
+        map(increment_histogram, self.sig)
+    
+    def increment_histogram(self, x):
+        self._histogram[x] += 1
+
 # --------------------- File management class ---------------
 class SignatureContainer():
     def __init__(self, size = 5):

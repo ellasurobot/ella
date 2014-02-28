@@ -41,12 +41,12 @@ class RobotNav(Robot):
 			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
-	def characterize_location(self, ls):
+	def characterize_location(self, sig_list):
 		last_rotation = self._motorSonar.get_current_rotation()
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
 			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
 				reading = self.get_sonar_value()
-				ls.sig[degree] = reading
+				sig_list[degree] = reading
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
@@ -61,7 +61,7 @@ class RobotNav(Robot):
 
 	def learn_specific_location(self, idx):
 		ls = LocationSignature()
-		self.characterize_location(ls)
+		self.characterize_location(ls.sig)
 		self._signatures.save(ls,idx)
 		print "STATUS:  Location " + str(idx) + " learned and saved."
 
@@ -77,14 +77,17 @@ class RobotNav(Robot):
 		self.learn_specific_location(idx)	
 
 	def recognize_location(self):
-		obs_signature = HistogramSignature()
-		self.characterize_location(ls_obs)
-		saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
-		self.recognize_location_for_any_rotation(obs_signature, signatures)
-
+		obs_signature = LocationSignature()
+		self.characterize_location(obs_signatre)
+	 	saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
+		self.find_best_fit(obs_signature, saved_signatures)
 
 	def recognize_location_for_any_rotation(self):
-		pass
+		signature = HistogramSignature()
+		self.characterize_location(signature)
+		signature.calculate_histogram()
+	 	saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
+		self.find_best_fit(signature, saved_signatures)
 
 	# This function tries to recognize the current location.
 	# 1.   Characterize current location
@@ -94,7 +97,7 @@ class RobotNav(Robot):
 	# 3.   Retain the learned location whose minimum distance with
 	#      actual characterization is the smallest.
 	# 4.   Display the index of the recognized location on the screen
-	def recognize_location(self, obs_sign, saved_signs):
+	def find_best_fit(self, obs_sign, saved_signs):
 		ls_obs = LocationSignature();
 		self.characterize_location(ls_obs);
 		# FILL IN: COMPARE ls_read with ls_obs and find the best match
