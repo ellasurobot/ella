@@ -8,22 +8,22 @@ import os
 # Location signature class: stores a signature characterizing one location
 class LocationSignature:
     def __init__(self, no_bins = 360):
-      self.sig = [0] * no_bins
+        self.sig = [0] * no_bins
  
-		def print_signature(self):
-			for i in range(len(self.sig)):
-				print self.sig[i]
+    def print_signature(self):
+        for i in range(len(self.sig)):
+            print self.sig[i]
 
-		def get_data(self):
-			return self.sig
+    def get_data(self):
+	return self.sig
 
 class HistogramSignature(LocationSignature):
-		def __init__(self):
-			LocationSignature.__init__(self)
-			self._histogram = [0] * 255
+    def __init__(self):
+	LocationSignature.__init__(self)
+	self._histogram = [0] * 255
 
-		def get_data(self):
-			return self._histogram 
+    def get_data(self):
+	return self._histogram 
 
 # --------------------- File management class ---------------
 class SignatureContainer():
