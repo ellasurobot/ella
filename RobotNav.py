@@ -8,7 +8,7 @@ ROTATION_PER_DEGREE_SONAR = 1
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(Robot):
-		
+	
 	def __init__(self):
 		Robot.__init__(self)
 		self._motorSonar = Motor("PORT_C") 
@@ -27,18 +27,18 @@ class RobotNav(Robot):
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):
-#			if(
+			#			if(
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
 
 	def scan_and_plot(self):
 		for degree in range(360):
-#				self.turn_sonar(1)
-				BrickPiUpdateValues()
-				reading = self.get_sonar_value()
-				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
-				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
-				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+			#				self.turn_sonar(1)
+			BrickPiUpdateValues()
+			reading = self.get_sonar_value()
+			x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
+			y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
+			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
 	def characterize_location(self, ls):
@@ -56,8 +56,8 @@ class RobotNav(Robot):
 
 	# FILL IN: compare two signatures
 	def sum_of_squares(self, list1, list2):
-			sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(list1, list2)))
-			return sq_diff
+		sq_diff = sum(map(lambda (x,y): math.pow(x-y,2),zip(list1, list2)))
+		return sq_diff
 
 	def learn_specific_location(self, idx):
 		ls = LocationSignature()
@@ -68,19 +68,19 @@ class RobotNav(Robot):
 	# Learns location i that is determined by the first loc_0i.dat that doesn't
 	# exist yet.
 	def learn_location(self):
-			idx = self._signatures.get_free_index();
-			if (idx == -1): # run out of signature files
-					print "\nWARNING:"
-					print "No signature file is available. NOTHING NEW will be learned and stored."
-					print "Please remove some loc_%%.dat files.\n"
-					return
-			self.learn_specific_location(idx)	
+		idx = self._signatures.get_free_index();
+		if (idx == -1): # run out of signature files
+			print "\nWARNING:"
+			print "No signature file is available. NOTHING NEW will be learned and stored."
+			print "Please remove some loc_%%.dat files.\n"
+			return
+		self.learn_specific_location(idx)	
 
 	def recognize_location(self):
-			obs_signature = HistogramSignature()
-			self.characterize_location(ls_obs)
-			saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
-			self.recognize_location_for_any_rotation(obs_signature, signatures)
+		obs_signature = HistogramSignature()
+		self.characterize_location(ls_obs)
+		saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
+		self.recognize_location_for_any_rotation(obs_signature, signatures)
 
 
 	def recognize_location_for_any_rotation(self):
@@ -95,18 +95,17 @@ class RobotNav(Robot):
 	#      actual characterization is the smallest.
 	# 4.   Display the index of the recognized location on the screen
 	def recognize_location(self, obs_sign, saved_signs):
-			ls_obs = LocationSignature();
-			self.characterize_location(ls_obs);
-
-			# FILL IN: COMPARE ls_read with ls_obs and find the best match
-			index_best_fit = -1
-			min_sq_diff = sys.maxint
-			for sign in saved_signs:
-					print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
-					sq_diff = self.sum_of_squares(obs_sign.get_data(), sign.get_data())
-					if sq_diff < min_sq_diff:	
-						min_sq_diff = sq_diff
-						index_best_fit = idx	
-			print("Best fit for location: ", idx, ", with sq_diff: ", min_sq_diff)
+		ls_obs = LocationSignature();
+		self.characterize_location(ls_obs);
+		# FILL IN: COMPARE ls_read with ls_obs and find the best match
+		index_best_fit = -1
+		min_sq_diff = sys.maxint
+		for sign in saved_signs:
+			print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
+			sq_diff = self.sum_of_squares(obs_sign.get_data(), sign.get_data())
+			if sq_diff < min_sq_diff:	
+				min_sq_diff = sq_diff
+				index_best_fit = idx	
+		print("Best fit for location: ", idx, ", with sq_diff: ", min_sq_diff)
 
 
