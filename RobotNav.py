@@ -3,8 +3,8 @@ from Sensor import *
 from place_rec_bits import *
 import sys
 
-MOTOR_SONAR_SPEED = 250
-ROTATION_PER_DEGREE_SONAR = 1
+MOTOR_SONAR_SPEED = 100
+ROTATION_PER_DEGREE_SONAR = 110.9
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(Robot):
@@ -29,6 +29,8 @@ class RobotNav(Robot):
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
+
+		print("rotated encoder degrees: ", initial_rotation - self._motorSonar.get_current_rotation())  
 
 	def scan_and_plot(self):
 		for degree in range(360):
