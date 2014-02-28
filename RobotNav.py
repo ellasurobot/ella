@@ -41,16 +41,21 @@ class RobotNav(Robot):
 			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
-	def characterize_location(self, sig_list):
+	def characterize_location(self, ls):
+		self._motorSonar.set_speed(MOTOR_SONAR_SPEED)
+		BrickPiUpdateValues()
+		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 		last_rotation = self._motorSonar.get_current_rotation()
+		degree = 0
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
 			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
 				reading = self.get_sonar_value()
-				sig_list[degree] = reading
+				ls.sig[degree] = reading
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 				last_rotation = self._motorSonar.get_current_rotation()
+				degree += 1 
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
 
@@ -61,7 +66,7 @@ class RobotNav(Robot):
 
 	def learn_specific_location(self, idx):
 		ls = LocationSignature()
-		self.characterize_location(ls.sig)
+		self.characterize_location(ls)
 		self._signatures.save(ls,idx)
 		print "STATUS:  Location " + str(idx) + " learned and saved."
 
@@ -79,14 +84,14 @@ class RobotNav(Robot):
 	def recognize_location(self):
 		obs_signature = LocationSignature()
 		self.characterize_location(obs_signatre)
-	 	saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
+	 	saved_signatures = [self._signatures.read(idx) for idx in range(self._signatures.size)]
 		self.find_best_fit(obs_signature, saved_signatures)
 
 	def recognize_location_for_any_rotation(self):
 		signature = HistogramSignature()
 		self.characterize_location(signature)
 		signature.calculate_histogram()
-	 	saved_signatures = [self._signatures.read(idx) for idx in self._signatures.size]
+	 	saved_signatures = [self._signatures.read(idx) for idx in range(self._signatures.size)]
 		self.find_best_fit(signature, saved_signatures)
 
 	# This function tries to recognize the current location.
@@ -103,12 +108,14 @@ class RobotNav(Robot):
 		# FILL IN: COMPARE ls_read with ls_obs and find the best match
 		index_best_fit = -1
 		min_sq_diff = sys.maxint
+		idx = 0
 		for sign in saved_signs:
 			print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
 			sq_diff = self.sum_of_squares(obs_sign.get_data(), sign.get_data())
 			if sq_diff < min_sq_diff:	
 				min_sq_diff = sq_diff
 				index_best_fit = idx	
+			idx += 1 
 		print("Best fit for location: ", idx, ", with sq_diff: ", min_sq_diff)
 
 

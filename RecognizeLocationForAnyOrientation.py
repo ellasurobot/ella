@@ -11,4 +11,4 @@ robot = RobotNav()
 
 centre = (400,400)
 
-robot.recognize_location_for_any_orientation()
+robot.recognize_location_for_any_rotation()

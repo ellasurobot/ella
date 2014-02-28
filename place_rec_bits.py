@@ -26,7 +26,7 @@ class HistogramSignature(LocationSignature):
 	return self._histogram 
 
     def calculate_histogram(self):
-        map(increment_histogram, self.sig)
+        map(self.increment_histogram, self.sig)
     
     def increment_histogram(self, x):
         self._histogram[x] += 1
