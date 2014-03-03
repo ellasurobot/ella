@@ -4,7 +4,7 @@ from place_rec_bits import *
 import sys
 
 MOTOR_SONAR_SPEED = 120 
-ROTATION_PER_DEGREE_SONAR = 1
+ROTATION_PER_DEGREE_SONAR = 113.5
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(Robot):
@@ -27,18 +27,27 @@ class RobotNav(Robot):
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):
-			#			if(
 			BrickPiUpdateValues()
+		print("rotations done: ", self._motorSonar.get_current_rotation() - initial_rotation)
 		self._motorSonar.set_speed(0)
 
 	def scan_and_plot(self):
-		for degree in range(360):
-			#				self.turn_sonar(1)
+		self._motorSonar.set_speed(MOTOR_SONAR_SPEED)
+		BrickPiUpdateValues()
+		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
+		last_rotation = self._motorSonar.get_current_rotation()
+		degree = 0
+		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
+			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
+				reading = self.get_sonar_value()
+				print("degree: ", degree, "sonar: ", reading, "rotations: ", last_rotation)
+				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
+				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
+				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+				last_rotation = self._motorSonar.get_current_rotation()
+				degree -= 1
 			BrickPiUpdateValues()
-			reading = self.get_sonar_value()
-			x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
-			y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
-			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+		self._motorSonar.set_speed(0)
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
 	def characterize_location(self, ls):
@@ -55,7 +64,7 @@ class RobotNav(Robot):
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 				last_rotation = self._motorSonar.get_current_rotation()
-				degree += 1 
+				degree -= 1
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
 
@@ -83,7 +92,7 @@ class RobotNav(Robot):
 
 	def recognize_location(self):
 		obs_signature = LocationSignature()
-		self.characterize_location(obs_signatre)
+		self.characterize_location(obs_signature)
 	 	saved_signatures = [self._signatures.read(idx) for idx in range(self._signatures.size)]
 		self.find_best_fit(obs_signature, saved_signatures)
 
