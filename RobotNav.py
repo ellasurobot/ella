@@ -12,7 +12,7 @@ class RobotNav(Robot):
 	def __init__(self):
 		Robot.__init__(self)
 		self._motorSonar = Motor("PORT_C") 
-		self._sonar = Sensor("PORT_2", "sonar")
+		self._sonar = Sensor("PORT_3", "sonar")
 		BrickPiSetupSensors()	
 		self._signatures = SignatureContainer(5)
 
@@ -40,7 +40,7 @@ class RobotNav(Robot):
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
 			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
 				reading = self.get_sonar_value()
-				print("degree: ", degree, "sonar: ", reading, "rotations: ", last_rotation)
+#				print("degree: ", degree, "sonar: ", reading, "rotations: ", last_rotation)
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
@@ -48,6 +48,7 @@ class RobotNav(Robot):
 				degree -= 1
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
+		BrickPiUpdateValues()
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
 	def characterize_location(self, ls):
@@ -55,18 +56,22 @@ class RobotNav(Robot):
 		BrickPiUpdateValues()
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 		last_rotation = self._motorSonar.get_current_rotation()
-		degree = 0
-		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
-			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
+		index = 0
+		while (index < 360):
+			degree_motor = math.fabs(self._motorSonar.get_current_rotation() - initial_rotation)
+			if(degree_motor > (index+1) * ROTATION_PER_DEGREE_SONAR):
+				degree = degree_motor / ROTATION_PER_DEGREE_SONAR
 				reading = self.get_sonar_value()
-				ls.sig[degree] = reading
+				ls.sig[index] = reading
+				index += 1
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
 				last_rotation = self._motorSonar.get_current_rotation()
-				degree -= 1
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
+		print("Readings: ", ls.sig, "with length: ", len(ls.sig))
+		BrickPiUpdateValues()
 
 	# FILL IN: compare two signatures
 	def sum_of_squares(self, list1, list2):
@@ -100,7 +105,11 @@ class RobotNav(Robot):
 		signature = HistogramSignature()
 		self.characterize_location(signature)
 		signature.calculate_histogram()
-	 	saved_signatures = [self._signatures.read(idx) for idx in range(self._signatures.size)]
+	 	saved_signatures = [HistogramSignature(self._signatures.read(idx)) for idx in range(self._signatures.size)]
+		i = 0
+		for saved_sign in saved_signatures:
+			print("current histogram vs saved histogram ",i ,": ", zip(signature.get_data(), saved_sign.get_data()))
+			i += 1
 		self.find_best_fit(signature, saved_signatures)
 
 	# This function tries to recognize the current location.
@@ -112,8 +121,6 @@ class RobotNav(Robot):
 	#      actual characterization is the smallest.
 	# 4.   Display the index of the recognized location on the screen
 	def find_best_fit(self, obs_sign, saved_signs):
-		ls_obs = LocationSignature();
-		self.characterize_location(ls_obs);
 		# FILL IN: COMPARE ls_read with ls_obs and find the best match
 		index_best_fit = -1
 		min_sq_diff = sys.maxint
@@ -121,10 +128,11 @@ class RobotNav(Robot):
 		for sign in saved_signs:
 			print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
 			sq_diff = self.sum_of_squares(obs_sign.get_data(), sign.get_data())
+			print ("diff: ", sq_diff, "index: ", idx)
 			if sq_diff < min_sq_diff:	
 				min_sq_diff = sq_diff
 				index_best_fit = idx	
 			idx += 1 
-		print("Best fit for location: ", idx, ", with sq_diff: ", min_sq_diff)
+		print("Best fit for location: ", index_best_fit, ", with sq_diff: ", min_sq_diff)
 
 

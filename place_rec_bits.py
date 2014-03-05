@@ -15,21 +15,24 @@ class LocationSignature:
             print self.sig[i]
 
     def get_data(self):
-	return self.sig
+        return self.sig
 
 class HistogramSignature(LocationSignature):
-    def __init__(self):
-	LocationSignature.__init__(self)
-	self._histogram = [0] * 255
+		def __init__(self, locationSignature = None):
+			LocationSignature.__init__(self)
+			self._histogram = [0] * 52
+			if (not locationSignature is None):
+				self.sig = locationSignature.sig
+				self.calculate_histogram()
 
-    def get_data(self):
-	return self._histogram 
+		def get_data(self):
+			return self._histogram 
 
-    def calculate_histogram(self):
-        map(self.increment_histogram, self.sig)
+		def calculate_histogram(self):
+			map(self.increment_histogram, self.sig)
     
-    def increment_histogram(self, x):
-        self._histogram[x] += 1
+		def increment_histogram(self, x):
+			self._histogram[x/5] += 1
 
 # --------------------- File management class ---------------
 class SignatureContainer():

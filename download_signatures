@@ -1,0 +1,3 @@
+cp ../../prac-files/*.dat ./
+echo "downloaded sigantures"
+
