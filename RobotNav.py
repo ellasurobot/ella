@@ -8,14 +8,18 @@ MOTOR_SONAR_SPEED = 120
 ROTATION_PER_DEGREE_SONAR = 113.5
 CENTRE_SCREEN = (400,400)
 
-class RobotNav(Robot):
+class RobotNav(RobotMCL):
 	
-	def __init__(self):
-		Robot.__init__(self)
+	def __init__(self, wall_map, canvas):
+		RobotMCL.__init__(self, wall_map, 0, 0, canvas)
+		self._particles = [ParticleMCL(0, 0, 0, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		self._motorSonar = Motor("PORT_C") 
 		self._sonar = Sensor("PORT_3", "sonar")
 		BrickPiSetupSensors()	
 		self._signatures = SignatureContainer(5)
+
+	def update_location(self, x, y, theta):
+		self._particles = [ParticleMCL(x, y, theta, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 
 	def get_sonar_value(self):
 		return self._sonar.get_value()	
