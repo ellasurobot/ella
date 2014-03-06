@@ -1,4 +1,4 @@
-from Robot import *
+from RobotMCL import *
 from Sensor import *
 from place_rec_bits import *
 import sys
@@ -118,6 +118,7 @@ class RobotNav(RobotMCL):
 		index = self.find_best_fit(signature, saved_signatures)
 		angle = self.find_angle(signature.sig, saved_signatures[index].sig)
 		print("location is: ", index, "angle of:", angle)
+		return (index, angle)
 
 	def find_angle(self, obs_sign, matched_sign):
 		angle = -1
@@ -155,4 +156,7 @@ class RobotNav(RobotMCL):
 		return index_best_fit
 		print("Best fit for location: ", index_best_fit, ", with sq_diff: ", min_sq_diff)
 
+	def navigate_through_rest(self, points_list):
+		for point in points_list:
+			self.navigate_to_way_point_a_bit(point[0], point[1])
 
