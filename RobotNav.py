@@ -2,6 +2,7 @@ from Robot import *
 from Sensor import *
 from place_rec_bits import *
 import sys
+import collections
 
 MOTOR_SONAR_SPEED = 120 
 ROTATION_PER_DEGREE_SONAR = 113.5
@@ -110,7 +111,21 @@ class RobotNav(Robot):
 		for saved_sign in saved_signatures:
 			print("current histogram vs saved histogram ",i ,": ", zip(signature.get_data(), saved_sign.get_data()))
 			i += 1
-		self.find_best_fit(signature, saved_signatures)
+		index = self.find_best_fit(signature, saved_signatures)
+		angle = self.find_angle(signature.sig, saved_signatures[index].sig)
+		print("location is: ", index, "angle of:", angle)
+
+	def find_angle(self, obs_sign, matched_sign):
+		angle = -1
+		obs_q = collections.deque(obs_sign)
+		min_sq_diff = sys.maxint
+		for i in range(360):
+			sq_diff = self.sum_of_squares(obs_q, matched_sign)
+			obs_q.rotate(1)
+			if(sq_diff < min_sq_diff):
+				min_sq_diff = sq_diff
+				angle = i
+		return angle
 
 	# This function tries to recognize the current location.
 	# 1.   Characterize current location
@@ -133,6 +148,7 @@ class RobotNav(Robot):
 				min_sq_diff = sq_diff
 				index_best_fit = idx	
 			idx += 1 
+		return index_best_fit
 		print("Best fit for location: ", index_best_fit, ", with sq_diff: ", min_sq_diff)
 
 
