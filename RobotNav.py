@@ -4,8 +4,8 @@ from place_rec_bits import *
 import sys
 import collections
 
-MOTOR_SONAR_SPEED = 120 
-ROTATION_PER_DEGREE_SONAR = 113.5
+MOTOR_SONAR_SPEED = 70
+ROTATION_PER_DEGREE_SONAR = 1
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(RobotMCL):
@@ -14,7 +14,7 @@ class RobotNav(RobotMCL):
 		RobotMCL.__init__(self, wall_map, 0, 0, canvas)
 		self._particles = [ParticleMCL(0, 0, 0, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		self._motorSonar = Motor("PORT_C") 
-		self._sonar = Sensor("PORT_3", "sonar")
+		self._sonar = Sensor("PORT_4", "sonar")
 		BrickPiSetupSensors()	
 		self._signatures = SignatureContainer(5)
 
@@ -45,7 +45,6 @@ class RobotNav(RobotMCL):
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < 360*ROTATION_PER_DEGREE_SONAR):
 			if(self._motorSonar.get_current_rotation() - last_rotation > ROTATION_PER_DEGREE_SONAR):
 				reading = self.get_sonar_value()
-#				print("degree: ", degree, "sonar: ", reading, "rotations: ", last_rotation)
 				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
 				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
 				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
@@ -129,6 +128,7 @@ class RobotNav(RobotMCL):
 			obs_q.rotate(1)
 			if(sq_diff < min_sq_diff):
 				min_sq_diff = sq_diff
+				print("find_angle: ", i)	
 				angle = i
 		return angle
 

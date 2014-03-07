@@ -1,6 +1,7 @@
 from RobotNav import *
 from particleDataStructures import Map, Canvas
 import globals
+import sys
 
 canvas = Canvas()
 wall_map = Map(canvas)
@@ -31,11 +32,17 @@ points = {1: (84, 30),
 
 point_index_map = {0:1, 1:2, 2:4, 3:5, 4:7}
 
-waypoints = [[2, 4, 5, 7], [1,4, 5, 7], [1, 2, 5, 7], [1, 2, 4, 7], [1, 2, 4, 5]]
+waypoints = [[2, 4, 5, 7, 1], [1, 4, 5, 7, 2], [1, 2, 5, 7, 4], [1, 2, 4, 7, 5], [1, 2, 4, 5, 7]]
+
+
+
 
 robot = RobotNav(wall_map, canvas)
-(index, theta) = (0, 35) #robot.recognize_location_for_any_rotation()
-(x, y) = points[point_index_map[index]]
-robot.update_location(x, y, theta)
-robot.navigate_through_rest([points[x] for x in waypoints[index]])
+robot.turn_sonar(int(sys.argv[1]))
+print(robot.get_sonar_value())
+#(index, theta) = robot.recognize_location_for_any_rotation()
+#print("index: ", index, "theta: ", theta)
+#(x, y) = points[point_index_map[index]]
+#robot.update_location(x, y, theta)
+#robot.navigate_through_rest([points[x] for x in waypoints[index]])
 

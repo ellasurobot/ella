@@ -65,8 +65,6 @@ class Map:
 	def get_walls(self):
 		return self.walls 
 
-			
-
 # Simple Particles set
 class Particles:
     def __init__(self):
