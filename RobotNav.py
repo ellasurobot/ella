@@ -4,8 +4,8 @@ from place_rec_bits import *
 import sys
 import collections
 
-MOTOR_SONAR_SPEED = 70
-ROTATION_PER_DEGREE_SONAR = 1
+MOTOR_SONAR_SPEED = 90
+ROTATION_PER_DEGREE_SONAR = 3 
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(RobotMCL):
@@ -30,8 +30,17 @@ class RobotNav(RobotMCL):
 		BrickPiUpdateValues()
 		degrees_to_turn = abs(angle) * ROTATION_PER_DEGREE_SONAR
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
-
+		curr_rotation = initial_rotation
 		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):
+			rotation = self._motorSonar.get_current_rotation()
+			if(True):
+				curr_rotation = rotation
+				degree = (rotation - initial_rotation)/ROTATION_PER_DEGREE_SONAR
+				reading = self.get_sonar_value()
+				x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
+				y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
+				print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+				print("degree turned: ", degree, "sonar reading: ", reading)
 			BrickPiUpdateValues()
 		print("rotations done: ", self._motorSonar.get_current_rotation() - initial_rotation)
 		self._motorSonar.set_speed(0)
@@ -55,6 +64,7 @@ class RobotNav(RobotMCL):
 		BrickPiUpdateValues()
 
 	# FILL IN: spin robot or sonar to capture a signature and store it in ls
+	'''
 	def characterize_location(self, ls):
 		self._motorSonar.set_speed(MOTOR_SONAR_SPEED)
 		BrickPiUpdateValues()
@@ -74,6 +84,27 @@ class RobotNav(RobotMCL):
 				last_rotation = self._motorSonar.get_current_rotation()
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
+		print("Readings: ", ls.sig, "with length: ", len(ls.sig))
+		BrickPiUpdateValues()
+'''
+	def characterize_location(self, ls):
+		self._motorSonar.set_speed(MOTOR_SONAR_SPEED)
+		BrickPiUpdateValues()
+		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
+		degrees_to_turn = 360 * ROTATION_PER_DEGREE_SONAR
+		index = 0
+		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation < degrees_to_turn):	
+			rotation = self._motorSonar.get_current_rotation()
+			degree = (rotation - initial_rotation)/ROTATION_PER_DEGREE_SONAR
+			reading = self.get_sonar_value()
+			x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
+			y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
+			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+			print("degree turned: ", degree, "sonar reading: ", reading)
+			ls.sig[degree] = reading
+			BrickPiUpdateValues()
+		self._motorSonar.set_speed(0)
+		ls.complete_sig()
 		print("Readings: ", ls.sig, "with length: ", len(ls.sig))
 		BrickPiUpdateValues()
 

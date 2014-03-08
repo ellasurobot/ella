@@ -17,6 +17,9 @@ class LocationSignature:
     def get_data(self):
         return self.sig
 
+		def complete_sig(self):
+				
+
 class HistogramSignature(LocationSignature):
 		def __init__(self, locationSignature = None):
 			LocationSignature.__init__(self)
