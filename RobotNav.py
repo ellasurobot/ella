@@ -4,13 +4,13 @@ from place_rec_bits import *
 import sys
 import collections
 
-MOTOR_SONAR_SPEED = 90
+MOTOR_SONAR_SPEED = 60
 ROTATION_PER_DEGREE_SONAR = 3 
 CENTRE_SCREEN = (400,400)
 
 class RobotNav(RobotMCL):
 	
-	def __init__(self, wall_map, canvas):
+	def __init__(self, wall_map=None, canvas=None):
 		RobotMCL.__init__(self, wall_map, 0, 0, canvas)
 		self._particles = [ParticleMCL(0, 0, 0, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		self._motorSonar = Motor("PORT_C") 
@@ -93,15 +93,15 @@ class RobotNav(RobotMCL):
 		initial_rotation = self._motorSonar.update_and_return_initial_rotation()
 		degrees_to_turn = 360 * ROTATION_PER_DEGREE_SONAR
 		index = 0
-		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation < degrees_to_turn):	
+		curr_rotation = initial_rotation
+		while (math.fabs(self._motorSonar.get_current_rotation() - initial_rotation) < degrees_to_turn):	
 			rotation = self._motorSonar.get_current_rotation()
 			degree = (rotation - initial_rotation)/ROTATION_PER_DEGREE_SONAR
 			reading = self.get_sonar_value()
-			x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
-			y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
-			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
-			print("degree turned: ", degree, "sonar reading: ", reading)
-			ls.sig[degree] = reading
+	#		x = CENTRE_SCREEN[0] + reading * math.cos(math.radians(degree))
+#			y = CENTRE_SCREEN[1] + reading * math.sin(math.radians(degree))
+#			print "drawLine:" + str(CENTRE_SCREEN + (x,y))
+			ls.sig[int(degree)] = reading
 			BrickPiUpdateValues()
 		self._motorSonar.set_speed(0)
 		ls.complete_sig()
@@ -157,10 +157,11 @@ class RobotNav(RobotMCL):
 		for i in range(360):
 			sq_diff = self.sum_of_squares(obs_q, matched_sign)
 			obs_q.rotate(1)
+#			print("angle: ", i, "queue", obs_q, "matched:", matched_sign)
 			if(sq_diff < min_sq_diff):
 				min_sq_diff = sq_diff
-				print("find_angle: ", i)	
 				angle = i
+			print("find_angle: ", i, "sq_diff: ", sq_diff)
 		return angle
 
 	# This function tries to recognize the current location.
@@ -189,5 +190,6 @@ class RobotNav(RobotMCL):
 
 	def navigate_through_rest(self, points_list):
 		for point in points_list:
+			print("travelling to:", point)
 			self.navigate_to_way_point_a_bit(point[0], point[1])
 

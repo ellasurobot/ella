@@ -6,7 +6,7 @@ from Robot import *
 import globals
 
 VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.020 # 0.15
-VAR_TURN_FOR_FORWARD_PER_CM = 0.01 # 0.02 # 0.01
+VAR_TURN_FOR_FORWARD_PER_CM = 0.005 # 0.02 # 0.01
 VAR_TURN_FOR_TURN_PER_CM = 0.01 # 0.01 # 0.01
 
 class Particle:

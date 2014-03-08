@@ -4,7 +4,7 @@ from Particle import *
 import sys
 
 VARIANCE = 2 
-K = 0.1
+K = 0.04
 
 class ParticleMCL(Particle):
 
@@ -12,7 +12,7 @@ class ParticleMCL(Particle):
 		Particle.__init__(self, weight)
 		self._x = x
 		self._y = y
-		self._theta = theta
+		self._theta = theta 
 		self._wall_map = wall_map	
 
 	def draw(self):

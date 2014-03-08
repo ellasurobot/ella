@@ -7,18 +7,23 @@ import os
 
 # Location signature class: stores a signature characterizing one location
 class LocationSignature:
-    def __init__(self, no_bins = 360):
-        self.sig = [0] * no_bins
- 
-    def print_signature(self):
-        for i in range(len(self.sig)):
-            print self.sig[i]
+		def __init__(self, no_bins = 360):
+			self.sig = [0] * no_bins
 
-    def get_data(self):
-        return self.sig
+		def print_signature(self):
+			for i in range(len(self.sig)):
+				print self.sig[i]
+
+		def get_data(self):
+			return self.sig
 
 		def complete_sig(self):
-				
+			for i in range(360):
+				if (self.sig[i] == 0):
+					curr_index = i
+					while self.sig[curr_index %  360] == 0:
+						curr_index += 1
+					self.sig[i] = self.sig[curr_index % 360]
 
 class HistogramSignature(LocationSignature):
 		def __init__(self, locationSignature = None):

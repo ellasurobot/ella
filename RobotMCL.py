@@ -13,10 +13,13 @@ class RobotMCL(Robot):
 	def __init__(self, wall_map, x, y, canvas):
 		Robot.__init__(self)
 		self._sonar = Sensor("PORT_4", "sonar")
-		self._map = wall_map.get_walls()
+		self._map = None
+		if wall_map is not None:
+			self._map = wall_map.get_walls()
 		self._particles = [ParticleMCL(x, y, 0, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
 		BrickPiSetupSensors()
-		self._canvas = canvas
+		if canvas is not None:
+			self._canvas = canvas
 		self._not_sampling = 0
 
 	def draw_particles(self):
@@ -100,6 +103,7 @@ class RobotMCL(Robot):
 				old_pos = (x_curr+new_distance*math.cos(math.radians(theta+theta_curr)), y_curr+new_distance*math.sin(math.radians(theta+theta_curr)), theta_curr + theta)
 			self.navigate_to_way_point_a_bit(x, y, old_pos)
 		else:
+			self.resample_particles()
 			print("NEW POINT")
 			
 	def angle_to_wall(self):
