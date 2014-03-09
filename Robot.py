@@ -7,7 +7,7 @@ from Particle import *
 import math
 from operator import attrgetter
 
-NUMBER_OF_PARTICLES = 150
+NUMBER_OF_PARTICLES = 100
 CYCLE_LENGTH = 15
 
 
@@ -45,17 +45,14 @@ class Robot:
 			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_CM * math.fabs(distance) - 10, "backward")
 
 	def turn(self, degrees): #degrees in encoder degree
-		if(abs(degrees) < 3):
-			return
-		else:
-			print("REALLY TURNING")
-			index = self.direction(degrees)
-			increase = 1
-			if (degrees < 0):
-				increase = 1.31
-			self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
-			self._motorA.set_speed(index * TURN_SPEED)
-			self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
+		print("I'm turning....this much:", degrees)
+		index = self.direction(degrees)
+		increase = 1
+		if (degrees < 0):
+			increase = 1.31
+		self._motorB.set_speed(-1 * index * TURN_SPEED * increase)
+		self._motorA.set_speed(index * TURN_SPEED)
+		self.run_motor(self._motorA, self._motorB, ROTATIONS_PER_DEGREE * math.fabs(degrees) - 10, "turn")		
 
 	def run_motor(self, reference_motor, other_motor, degrees_to_turn, movement):
 		self.error = 0
@@ -76,8 +73,8 @@ class Robot:
 			temp += 1
 			last_rotation = curr_rotation
 			self.draw_particles()
-			if (time.time() - init_time > 0.05):
-				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
+#			if (time.time() - init_time > 0.05):
+#				self.adjust_speed(reference_motor, other_motor, self.initial_time, movement)
 			curr_time = time.time()
 			BrickPiUpdateValues()
 		self._motorA.set_speed(0)
@@ -171,8 +168,6 @@ class Robot:
 		theta = (theta_origin - theta_curr) % 360
 		if(theta > 180):
 			theta = theta - 360
-		else:
-			theta = theta	
 		return theta
 
 	# Adjust the speed of other motor according to the reference motor

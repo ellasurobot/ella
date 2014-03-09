@@ -3,7 +3,7 @@ import random
 from Particle import *
 import sys
 
-VARIANCE = 2 
+VARIANCE = 0.5 
 K = 0.04
 
 class ParticleMCL(Particle):
@@ -19,9 +19,29 @@ class ParticleMCL(Particle):
 		return (self._x, self._y, self._theta)
 
 	def calculate_likelihood(self, sensor_distance):
-		m = self.calc_min_distance_to_wall()[0]
+		info = self.calc_min_distance_to_wall()
+		m = info[0]
+		(Ax, Ay, Bx, By) = info[1]
+		top = math.cos(math.radians(self._theta)) * (Ay - By) + math.sin(math.radians(self._theta)) * (Bx - Ax)
+		bottom = math.sqrt(math.pow(Ay - By, 2) + math.pow(Bx - Ax, 2))
+		angle = math.degrees(math.acos(top / bottom))
+		print("angle: ", angle)
+		if (angle > 20 and angle < 340):
+			return 0
 		z = sensor_distance	
-		return math.exp(-math.pow((z - m),2)/(2*VARIANCE)) + K
+		if sensor_distance > 10 and sensor_distance <= 30:
+			variance = 0.28
+		elif sensor_distance > 30 and sensor_distance <= 50:
+			variance = 0.32
+		elif sensor_distance > 50 and sensor_distance <= 70:
+			variance = 0.54
+		elif sensor_distance > 70 and sensor_distance <= 90:
+			variance = 0.5
+		elif sensor_distance > 90 and sensor_distance < 110:
+			variance = 0.32
+		else:
+			variance = 0.4
+		return math.exp(-math.pow((z - m),2)/(2*variance)) + K
 
 	def update_weight(self, sensor_distance):
 		likelihood = self.calculate_likelihood(sensor_distance)
