@@ -34,7 +34,7 @@ points = {1: (84, 30),
 
 point_index_map = {0:1, 1:2, 2:4, 3:5, 4:7}
 
-waypoints = [[7, 4, 5, 4, 2, 1], [4, 5, 4, 7, 1, 2], [7, 1, 2, 4, 5, 4], [4,3,2,1,7,4,5], [1, 2, 4, 5,4, 7]]
+waypoints = [[7, 4, 5, 4, 2, 1], [4, 5, 4, 7, 1, 2], [7, 1, 2, 4, 5, 4], [4,7,1,2,4,5], [1, 2, 4, 5,4, 7]]
 
 
 
@@ -42,9 +42,12 @@ waypoints = [[7, 4, 5, 4, 2, 1], [4, 5, 4, 7, 1, 2], [7, 1, 2, 4, 5, 4], [4,3,2,
 robot = RobotNav(wall_map, canvas)
 #robot.turn_sonar(int(sys.argv[1]))
 #print(robot.get_sonar_value())
-(index, theta) = (3, 270) #robot.recognize_location_for_any_rotation()
-print("index: ", index, "theta: ", theta)
+(index, theta) = robot.recognize_location_for_any_rotation()
 (x, y) = points[point_index_map[index]]
 robot.update_location(x, y, theta)
+print("theta before recover: ", theta)
+new_theta = robot.try_to_recover(index, x, y, theta)
+print("index: ", index, "theta: ", new_theta)
+robot.update_location(x, y, new_theta)
 robot.navigate_through_rest([points[x] for x in waypoints[index]])
 

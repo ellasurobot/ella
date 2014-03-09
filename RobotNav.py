@@ -4,9 +4,17 @@ from place_rec_bits import *
 import sys
 import collections
 
+DIFF_TRESHOLD = 3
 MOTOR_SONAR_SPEED = 60
 ROTATION_PER_DEGREE_SONAR = 3 
 CENTRE_SCREEN = (400,400)
+
+point_index_map = {0:1, 1:2, 2:4, 3:5, 4:7}
+points = {1: (84, 30), 
+				 	2: (180, 30), 
+					4: (126, 54), 
+					5: (126, 168), 
+					7: (30, 54)}
 
 class RobotNav(RobotMCL):
 	
@@ -17,6 +25,46 @@ class RobotNav(RobotMCL):
 		self._sonar = Sensor("PORT_4", "sonar")
 		BrickPiSetupSensors()	
 		self._signatures = SignatureContainer(5)
+		#self.computed_histogram = self.create_histograms()
+
+	def create_histograms(self):
+		histograms = []
+		for i in range(0,5):
+			print("array ", i)
+			(x, y) = points[point_index_map[i]]		
+			histogram = []
+			for j in range(0, 360):
+				(m, wall) = self.calc_min_distance_to_wall(x, y, j)
+				histogram.append(m)		
+			#print histogram
+			histograms.append(histogram)
+		return histograms
+
+	def calc_min_distance_to_wall(self, x, y, j):
+		ms = self.calc_distances_to_walls(x,y,j)
+		for (m, wall) in ms:
+			if self.in_wall_of(m, x, y, j, wall):
+				return (m, wall)
+		return (sys.maxint, wall)
+
+	def calc_distances_to_walls(self, x, y, j):
+		return sorted([self.calculate_m(x, y, j, wall) for wall in self.get_wall_map()])
+	
+	def calculate_m(self, x, y,	j, (Ax, Ay, Bx, By)):
+		theta = j
+		top = (By - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
+		bottom = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
+		if (bottom == 0) or (top/bottom) < 0:
+			return (sys.maxint, (Ax, Ay, Bx, By))
+		else:
+			return (top / bottom, (Ax, Ay, Bx, By))    
+
+	def in_wall_of(self, m, x, y, j, (x1, y1, x2, y2)):
+		theta = j
+		x += math.cos(math.radians(theta)) * m
+		y += math.sin(math.radians(theta)) * m
+		return (min(x1, x2) <= round(x) <= max(x1, x2) and min(y1, y2) <= round(y) <= max(y1, y2))
+	
 
 	def update_location(self, x, y, theta):
 		self._particles = [ParticleMCL(x, y, theta, (1.0/NUMBER_OF_PARTICLES), self._map) for i in range(NUMBER_OF_PARTICLES)]	
@@ -136,6 +184,31 @@ class RobotNav(RobotMCL):
 	 	saved_signatures = [self._signatures.read(idx) for idx in range(self._signatures.size)]
 		self.find_best_fit(obs_signature, saved_signatures)
 
+	def try_to_recover(self, index, x, y, theta):
+		time.sleep(0.5)
+		assumed_sonar_reading = self.computed_histogram[index][theta]
+		print("assumed_sonar_reading", assumed_sonar_reading)
+		actual_sonar_reading = self.get_sonar_value()
+		print("actual_sonar_reading", actual_sonar_reading)
+		new_theta = theta
+		if(math.fabs(actual_sonar_reading - assumed_sonar_reading) > DIFF_TRESHOLD):
+			new_theta = self.get_correct_angle(index, theta, actual_sonar_reading)		
+		return new_theta
+
+	def get_correct_angle(self, index, theta, sonar_read):
+		ANGLE_ERROR = 100 
+		histogram = self.computed_histogram[index]
+		start_index = theta - ANGLE_ERROR
+		end_index = theta + ANGLE_ERROR		
+		new_theta = theta
+		diff = sys.maxint
+		for i in range (start_index, end_index + 1):
+			temp_diff = math.fabs(histogram[i%360] - sonar_read)
+			if(temp_diff < diff):
+				diff = temp_diff
+				new_theta = i%360		
+		return new_theta
+
 	def recognize_location_for_any_rotation(self):
 		signature = HistogramSignature()
 		self.characterize_location(signature)
@@ -161,7 +234,7 @@ class RobotNav(RobotMCL):
 			if(sq_diff < min_sq_diff):
 				min_sq_diff = sq_diff
 				angle = i
-			print("find_angle: ", i, "sq_diff: ", sq_diff)
+#			print("find_angle: ", i, "sq_diff: ", sq_diff)
 		return angle
 
 	# This function tries to recognize the current location.

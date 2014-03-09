@@ -14,8 +14,8 @@ class Sensor:
                     }
                 port_number = port_dictionary[port]
                 self.__port = port_number
-                type = type_dictionary[sensor_type]
-                BrickPi.SensorType[port_number] = type
+                s_type = type_dictionary[sensor_type]
+                BrickPi.SensorType[port_number] = s_type
 
     def get_value(self):
         return BrickPi.Sensor[self.__port]

@@ -22,6 +22,9 @@ class RobotMCL(Robot):
 			self._canvas = canvas
 		self._not_sampling = 0
 
+	def get_wall_map(self):
+		return self._map
+
 	def draw_particles(self):
 		self._canvas.drawParticles([p.to_tuple() for p in self._particles])
 
@@ -48,6 +51,7 @@ class RobotMCL(Robot):
 	def resample_particles(self):
 		total_weight = 0
 		sonar_reading = self.get_actual_sonar_value()
+		print("SONAR!: ", sonar_reading)
 		if sonar_reading < 255:
 			for p in self._particles:
 				total_weight += p.update_weight(sonar_reading)	

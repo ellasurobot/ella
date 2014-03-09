@@ -14,7 +14,7 @@ class ParticleMCL(Particle):
 		self._y = y
 		self._theta = theta 
 		self._wall_map = wall_map	
-
+	
 	def draw(self):
 		return (self._x, self._y, self._theta)
 
@@ -25,7 +25,7 @@ class ParticleMCL(Particle):
 		top = math.cos(math.radians(self._theta)) * (Ay - By) + math.sin(math.radians(self._theta)) * (Bx - Ax)
 		bottom = math.sqrt(math.pow(Ay - By, 2) + math.pow(Bx - Ax, 2))
 		angle = math.degrees(math.acos(top / bottom))
-		print("angle: ", angle)
+		#print("angle: ", angle)
 		if (angle > 20 and angle < 340):
 			return 0
 		z = sensor_distance	
