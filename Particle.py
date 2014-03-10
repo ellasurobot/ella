@@ -5,8 +5,8 @@ import sys
 from Robot import *
 import globals
 
-VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.020 # 0.15
-VAR_TURN_FOR_FORWARD_PER_CM = 0.05 # 0.02 # 0.01
+VAR_DISTANCE_FOR_FORWARD_PER_CM = 0.015 # 0.15
+VAR_TURN_FOR_FORWARD_PER_CM = 0.04 # 0.02 # 0.01
 VAR_TURN_FOR_TURN_PER_CM = 0.01 # 0.01 # 0.01
 
 class Particle:

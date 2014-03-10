@@ -46,6 +46,8 @@ class Robot:
 
 	def turn(self, degrees): #degrees in encoder degree
 		print("I'm turning....this much:", degrees)
+		if (abs(degrees) < 5):
+			return
 		index = self.direction(degrees)
 		increase = 1
 		if (degrees < 0):

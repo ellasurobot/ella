@@ -2,7 +2,13 @@ from RobotMCL import *
 from Sensor import *
 from place_rec_bits import *
 import sys
+import time
 import collections
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(12, GPIO.OUT)    #GPIO 18
+GPIO.setup(13, GPIO.OUT)    #GPIO 27
 
 DIFF_TRESHOLD = 3
 MOTOR_SONAR_SPEED = 60
@@ -25,7 +31,7 @@ class RobotNav(RobotMCL):
 		self._sonar = Sensor("PORT_4", "sonar")
 		BrickPiSetupSensors()	
 		self._signatures = SignatureContainer(5)
-		#self.computed_histogram = self.create_histograms()
+		self.computed_histogram = self.create_histograms()
 
 	def create_histograms(self):
 		histograms = []
@@ -185,18 +191,25 @@ class RobotNav(RobotMCL):
 		self.find_best_fit(obs_signature, saved_signatures)
 
 	def try_to_recover(self, index, x, y, theta):
+		BrickPiUpdateValues()
 		time.sleep(0.5)
 		assumed_sonar_reading = self.computed_histogram[index][theta]
 		print("assumed_sonar_reading", assumed_sonar_reading)
 		actual_sonar_reading = self.get_sonar_value()
 		print("actual_sonar_reading", actual_sonar_reading)
+		BrickPiUpdateValues()
+		actual_sonar_reading = self.get_sonar_value()
+		print("actual_sonar_reading", actual_sonar_reading)
+		BrickPiUpdateValues()
+		actual_sonar_reading = self.get_sonar_value()
+		print("actual_sonar_reading", actual_sonar_reading)
 		new_theta = theta
-		if(math.fabs(actual_sonar_reading - assumed_sonar_reading) > DIFF_TRESHOLD):
+		if(math.fabs(actual_sonar_reading - assumed_sonar_reading) > DIFF_TRESHOLD and actual_sonar_reading < 255):
 			new_theta = self.get_correct_angle(index, theta, actual_sonar_reading)		
 		return new_theta
 
 	def get_correct_angle(self, index, theta, sonar_read):
-		ANGLE_ERROR = 100 
+		ANGLE_ERROR = 50 
 		histogram = self.computed_histogram[index]
 		start_index = theta - ANGLE_ERROR
 		end_index = theta + ANGLE_ERROR		
@@ -264,5 +277,15 @@ class RobotNav(RobotMCL):
 	def navigate_through_rest(self, points_list):
 		for point in points_list:
 			print("travelling to:", point)
+			self.flash_lights()
 			self.navigate_to_way_point_a_bit(point[0], point[1])
 
+	def flash_lights(self):
+		GPIO.output(12, True)
+		GPIO.output(13, False)
+		time.sleep(0.5)
+		GPIO.output(12, False)
+		GPIO.output(13, True)
+		time.sleep(0.5)
+		GPIO.output(12, False)
+		GPIO.output(13, False)
